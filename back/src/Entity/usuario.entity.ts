@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Factura } from "./factura.entity";
 
 @Entity('usuario')
 export class Usuario {
@@ -25,5 +26,8 @@ export class Usuario {
 
     @Column({type:"varchar", length:50, unique:true})    
     email: string;
+
+    @OneToMany(type => Factura, factura => factura.usuario)
+    facturas:Factura[]
 
 }
