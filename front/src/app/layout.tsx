@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -28,7 +29,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        {/* Contenedor para la imagen de fondo */}
+        <div
+          className="fixed inset-0 bg-cover bg-center -z-10"
+          style={{ backgroundImage: "url('https://img.freepik.com/vector-gratis/fondo-futurista-tecnologia-degradada_23-2149122416.jpg')" }}
+        />
+        {/* Overlay opcional para oscurecer la imagen de fondo */}
+        <div className="fixed inset-0 bg-black opacity-50 -z-10"></div>
+        
+        {/* Contenido de la aplicación */}
+        <div className="relative z-10">
+          {children}
+        </div>
       </body>
     </html>
   );
