@@ -27,6 +27,9 @@ export class Usuario {
     @Column({type:"varchar", length:50, unique:true})    
     email: string;
 
+    @Column({type:"varchar", length:50})    
+    password: string;
+
     @OneToMany(type => Factura, factura => factura.usuario)
     facturas:Factura[]
 

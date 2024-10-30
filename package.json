@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@nestjs/swagger": "^8.0.1",
+    "class-validator": "^0.14.1"
+  }
+}
