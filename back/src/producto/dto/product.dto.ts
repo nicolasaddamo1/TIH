@@ -14,9 +14,9 @@ export class CreateProductDto {
     @IsNumber()
     stock: number
     
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    imagen: string
+    imagen?: string
     
     @IsOptional()
     @IsString()

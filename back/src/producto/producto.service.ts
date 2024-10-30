@@ -42,7 +42,13 @@ constructor(
 
 
 
-    async deleteProducts(id:string){
+    async deleteProductsService(id:string){
+        console.log(id);
+        
+        const foundedProduct = await this.productoRepository.findOneBy({id})
+        if (!foundedProduct) {
+            throw new Error('Product not found')
+        }
     return await this.productoRepository.delete(id)
     }
 }

@@ -14,9 +14,9 @@ export class Producto {
     @Column({type:"int"})
     stock: number
 
-    @Column({type:"varchar", length:50})
-    imagen: string
+    @Column({type:"varchar", length:50, nullable: true})
+    imagen?: string
 
     @Column({type:"varchar", length:50})
-    categoria: string
+    categoria?: string
 }
