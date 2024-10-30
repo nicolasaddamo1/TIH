@@ -41,7 +41,8 @@ constructor(
     }
 
 
-    async deleteProducts(){
-        return "hola"
+
+    async deleteProducts(id:string){
+    return await this.productoRepository.delete(id)
     }
 }
