@@ -32,7 +32,7 @@ export class CreateUserDto{
     
     @IsString()
     @IsOptional()
-    password:string
+    password?:string
     
     @IsBoolean()
     @IsOptional()

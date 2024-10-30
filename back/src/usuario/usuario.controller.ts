@@ -4,7 +4,7 @@ import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 
 @Controller('usuarios')
-export class AuthController {
+export class UsuarioController {
 constructor(
     private  usuarioService:UsuarioService
 ){}
@@ -35,5 +35,5 @@ constructor(
     ){
         return this.usuarioService.deleteUserService(id)
     }
-    
+
 }
