@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Factura } from "./factura.entity";
+import { IsBoolean } from "class-validator";
 
 @Entity('usuario')
 export class Usuario {
@@ -29,6 +30,10 @@ export class Usuario {
 
     @Column({type:"varchar", length:50})    
     password: string;
+
+    @IsBoolean()
+    @Column({type:"boolean"})    
+    isAdmin:boolean
 
     @OneToMany(type => Factura, factura => factura.usuario)
     facturas:Factura[]
