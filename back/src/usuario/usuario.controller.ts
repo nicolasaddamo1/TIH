@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
-import { CreateUserDto } from './user.dto';
+import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 
 @Controller('usuarios')
@@ -22,14 +22,18 @@ constructor(
     }
     
     @Put(':id')
-    async updateUser(){
-        return this.usuarioService.updateUserService()
+    async updateUser(
+        @Param('id') id:string,
+        @Body()data:UpdateUserDto
+    ){
+        return this.usuarioService.updateUserService(id, data)
     }
 
     @Delete(':id')
-    async deleteUser(){
-        return this.usuarioService.deleteUserService()
+    async deleteUser(
+        @Param('id') id:string
+    ){
+        return this.usuarioService.deleteUserService(id)
     }
-
-
+    
 }
