@@ -7,7 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/database.config';
-import { Usuario } from './Entity/usuario.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -18,6 +18,13 @@ import { Usuario } from './Entity/usuario.entity';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: typeOrmConfig,
+    }),
+    JwtModule.register({
+      global: true,
+      signOptions: {
+        expiresIn: '2h'
+      },
+      secret: process.env.JWT_SECRET,
     }),
     UsuarioModule, ProductoModule, AuthModule],
   controllers: [AppController],
