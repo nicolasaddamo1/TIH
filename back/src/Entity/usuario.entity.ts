@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Factura } from "./factura.entity";
 import { IsBoolean } from "class-validator";
+import { Role } from "src/enum/roles.enum";
 
 @Entity('usuario')
 export class Usuario {
@@ -28,7 +29,10 @@ export class Usuario {
     @Column({type:"varchar", length:50, unique:true})    
     email: string;
 
-    @Column({type:"varchar", length:50})    
+    @Column({ type:'enum', enum: Role, default: Role.USER })
+    role: Role;
+
+    @Column({type:"varchar", length:250})    
     password: string;
 
     @IsBoolean()
@@ -37,5 +41,6 @@ export class Usuario {
 
     @OneToMany(type => Factura, factura => factura.usuario)
     facturas:Factura[]
+
 
 }

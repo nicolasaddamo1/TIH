@@ -1,5 +1,7 @@
 import { PickType } from "@nestjs/swagger"
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
+import { Role } from "src/enum/roles.enum"
+import { Column } from "typeorm"
 
 export class CreateUserDto{
     @IsNumber()
@@ -31,13 +33,17 @@ export class CreateUserDto{
     email:string
     
     @IsString()
-    @IsOptional()
-    password?:string
+    @IsNotEmpty()
+    password:string
+    
+    
+    @IsEnum(Role)
+    @IsNotEmpty()
+    role:Role
     
     @IsBoolean()
     @IsOptional()
-    isAdmin:boolean
-
+    isAdmin?:boolean
 }
 export class LoginUserDto extends PickType(CreateUserDto, ['email', 'password']){}
 export class UpdateUserDto{
@@ -76,5 +82,10 @@ export class UpdateUserDto{
     @IsBoolean()
     @IsOptional()
     isAdmin?:boolean
+
+    @IsEnum(Role)
+    @IsNotEmpty()
+    role?:Role
+
 
 }
