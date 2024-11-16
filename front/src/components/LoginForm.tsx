@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +37,9 @@ const LoginForm: React.FC = () => {
       // Extraer información del payload según lo necesario
       console.log('Nombre:', payload.nombre);
       console.log('Roles:', payload.roles);
+      navigate('/sales'); // Asegúrate de que la ruta esté configurada correctamente
+
+
     } catch (err) {
       setError('Error al conectar con el servidor');
       console.error(err);

@@ -54,7 +54,7 @@ const SalesForm: React.FC = () => {
       <div className="backdrop-blur-md bg-white/30 p-6 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-center text-2xl font-semibold mb-4">Venta de Productos</h2>
         <form className="space-y-4">
-          <select onChange={handleProductSelect} className="w-full p-3 rounded-md bg-gray-50">
+          <select onChange={handleProductSelect} className="w-full p-3 rounded-md bg-gray-800">
             <option value="">Seleccione un producto</option>
             {productsFromDb.map((product) => (
               <option key={product.id} value={product.id}>
@@ -68,7 +68,7 @@ const SalesForm: React.FC = () => {
             min="1"
             value={quantity}
             onChange={handleQuantityChange}
-            className="w-full p-3 rounded-md bg-gray-50"
+            className="w-full p-3 rounded-md bg-gray-800"
           />
           <p>Total: ${total}</p>
           <button type="button" onClick={handleSale} className="w-full p-3 rounded-md bg-green-500 text-white">
