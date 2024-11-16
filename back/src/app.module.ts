@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/database.config';
 import { JwtModule } from '@nestjs/jwt';
+import { VentaModule } from './ventas/ventas.module';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { JwtModule } from '@nestjs/jwt';
       },
       secret: process.env.JWT_SECRET,
     }),
-    UsuarioModule, ProductoModule, AuthModule],
+    UsuarioModule, ProductoModule, AuthModule, VentaModule],
   controllers: [AppController],
   providers: [AppService],
 })

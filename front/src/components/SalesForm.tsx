@@ -1,34 +1,31 @@
-// src/components/SalesForm.tsx
 import React, { useState, useEffect } from 'react';
 import {jwtDecode} from 'jwt-decode';
 
+// Interfaces
 interface Product {
-  id: number;
-  name: string;
-  price: number;
+  id: string;
+  nombre: string;
+  precio: number;
   stock: number;
+  categoria?: string;
+  imagen?: string;
 }
 
 interface JwtPayload {
-  sub: string; // O el tipo que representa el ID del usuario
-  // Agrega otros campos si los necesitas
+  sub: string;
 }
 
-const productsFromDb: Product[] = [
-  { id: 1, name: 'Producto A', price: 100, stock: 10 },
-  { id: 2, name: 'Producto B', price: 150, stock: 5 },
-  // Más productos de ejemplo
-];
-
+// Componente principal
 const SalesForm: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [userId, setUserId] = useState<string | null>(null);
+  const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
 
-  // Decodificar el token para obtener el ID del usuario
   useEffect(() => {
-    const token = localStorage.getItem('accessToken'); // O de donde estés almacenando el token
+    const token = localStorage.getItem('accessToken');
     if (token) {
       try {
         const decoded: JwtPayload = jwtDecode(token);
@@ -39,12 +36,25 @@ const SalesForm: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/producto');
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error al obtener productos:', error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   const handleProductSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const productId = parseInt(e.target.value);
-    const product = productsFromDb.find((p) => p.id === productId) || null;
+    const productId = e.target.value;
+    const product = products.find((p) => p.id === productId) || null;
     setSelectedProduct(product);
     if (product) {
-      setTotal(product.price * quantity);
+      setTotal(product.precio * quantity);
     }
   };
 
@@ -52,23 +62,59 @@ const SalesForm: React.FC = () => {
     const qty = parseInt(e.target.value);
     setQuantity(qty);
     if (selectedProduct) {
-      setTotal(selectedProduct.price * qty);
+      setTotal(selectedProduct.precio * qty);
     }
   };
 
-  const handleSale = () => {
-    if (selectedProduct && quantity <= selectedProduct.stock) {
-      const updatedStock = selectedProduct.stock - quantity;
-
-      alert(`Venta realizada por el usuario con ID: ${userId}. 
-        Quedan ${updatedStock} unidades de ${selectedProduct.name}.`);
-
-      // Aquí actualizarías el stock en la base de datos o enviarías la venta al backend
-      setSelectedProduct(null);
-      setQuantity(1);
-      setTotal(0);
+  const handleAddToCart = () => {
+    if (selectedProduct && quantity > 0) {
+      const existingItem = cart.find((item) => item.product.id === selectedProduct.id);
+      if (existingItem) {
+        alert('Este producto ya está en el carrito. Modifica la cantidad si es necesario.');
+      } else {
+        setCart([...cart, { product: selectedProduct, quantity }]);
+        setSelectedProduct(null);
+        setQuantity(1);
+        setTotal(0);
+      }
     } else {
-      alert('Stock insuficiente');
+      alert('Selecciona un producto y una cantidad válida.');
+    }
+  };
+
+  const handleRemoveFromCart = (productId: string) => {
+    setCart(cart.filter((item) => item.product.id !== productId));
+  };
+
+  const calculateTotalPrice = () => {
+    return cart.reduce((sum, item) => sum + item.product.precio * item.quantity, 0);
+  };
+
+  const handleSale = async () => {
+    if (!userId || cart.length === 0) {
+      alert('Debes agregar productos al carrito o estar autenticado.');
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:3000/ventas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          items: cart.map((item) => ({
+            productId: item.product.id,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+      if (response.ok) {
+        alert('Venta realizada exitosamente.');
+        setCart([]);
+      } else {
+        alert('Hubo un problema al realizar la venta.');
+      }
+    } catch (error) {
+      console.error('Error al realizar la venta:', error);
     }
   };
 
@@ -80,9 +126,9 @@ const SalesForm: React.FC = () => {
         <form className="space-y-4">
           <select onChange={handleProductSelect} className="w-full p-3 rounded-md bg-gray-800">
             <option value="">Seleccione un producto</option>
-            {productsFromDb.map((product) => (
+            {products.map((product) => (
               <option key={product.id} value={product.id}>
-                {product.name} - ${product.price} (Stock: {product.stock})
+                {product.nombre} - ${product.precio} (Stock: {product.stock})
               </option>
             ))}
           </select>
@@ -94,11 +140,49 @@ const SalesForm: React.FC = () => {
             onChange={handleQuantityChange}
             className="w-full p-3 rounded-md bg-gray-800"
           />
-          <p>Total: ${total}</p>
-          <button type="button" onClick={handleSale} className="w-full p-3 rounded-md bg-green-500 text-white">
-            Realizar Venta
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            className="w-full p-3 rounded-md bg-blue-500 text-white"
+          >
+            Agregar al Carrito
           </button>
         </form>
+        <div className="mt-6">
+          <h3 className="text-xl text-white mb-2">Carrito</h3>
+          {cart.length === 0 ? (
+            <p className="text-sm text-gray-400">El carrito está vacío.</p>
+          ) : (
+            <ul className="space-y-2">
+              {cart.map((item) => (
+                <li
+                  key={item.product.id}
+                  className="bg-gray-700 p-2 rounded-md text-white flex justify-between items-center"
+                >
+                  <span>
+                    {item.product.nombre}     Cantidad: {item.quantity}      Precio ${item.product.precio * item.quantity}
+                  </span>
+                  <button
+                    onClick={() => handleRemoveFromCart(item.product.id)}
+                    className="bg-red-500 p-2 rounded text-white"
+                  >
+                    🗑️
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="text-white mt-4">
+            <strong>Total: ${calculateTotalPrice()}</strong>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={handleSale}
+          className="w-full p-3 mt-4 rounded-md bg-green-500 text-white"
+        >
+          Realizar Venta
+        </button>
       </div>
     </div>
   );

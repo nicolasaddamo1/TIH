@@ -18,5 +18,5 @@ export class Producto {
     imagen?: string
 
     @Column({type:"varchar", length:50})
-    categoria?: string
+    categoria?: string//xdefecto celular o computadora
 }

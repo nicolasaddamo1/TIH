@@ -15,33 +15,17 @@ export class AuthService {
         private readonly jwtService: JwtService,
 
     ){}
-    async login (email: string, password: string) {
+    async login(email: string, password: string) {
         console.log(email, password);
-        const user = await this.usuarioRepository.findOne({ where: { email }});
-        if (!user) throw new NotFoundException('Credenciales invalidas.');
-        let userRoles: Role[] = [user.role];
-
+        const user = await this.usuarioRepository.findOne({ where: { email } });
+        if (!user) throw new NotFoundException('Credenciales inválidas.');
+    
         if (!password) {
-            const payload = {
-                nombre: user.nombre,
-                apellido: user.apellido,
-                direccion: user.direccion,
-                fechaNacimiento: user.fechaNacimiento,
-                dni: user.dni,
-                email: user.email,
-                nroTelefono: user.nroTelefono, 
-                sub: user.id,
-                roles: userRoles,
-                
-            };
-    
-            const accessToken = this.jwtService.sign(payload);
-    
-            return { success: 'Login exitoso.', accessToken };
+            throw new BadRequestException('Contraseña requerida.');
         }
-
+    
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) throw new BadRequestException('Credenciales invalidas.');
+        if (!isPasswordValid) throw new BadRequestException('Credenciales inválidas.');
     
         const payload = { 
             nombre: user.nombre,
@@ -52,12 +36,12 @@ export class AuthService {
             email: user.email,
             nroTelefono: user.nroTelefono, 
             sub: user.id,
-            roles: userRoles
-        }
+            roles: [user.role],
+        };
         
         const accessToken = this.jwtService.sign(payload);
     
-        return { success : 'Login exitoso.', accessToken };
+        return { success: 'Login exitoso.', accessToken };
     }
     
     async signUp(createUserDTO:CreateUserDto){

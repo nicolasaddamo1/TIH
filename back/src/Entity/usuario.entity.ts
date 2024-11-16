@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Factura } from "./factura.entity";
 import { IsBoolean } from "class-validator";
 import { Role } from "src/enum/roles.enum";
+import { Venta } from "./venta.entity";
 
 @Entity('usuario')
 export class Usuario {
@@ -41,6 +42,9 @@ export class Usuario {
 
     @OneToMany(type => Factura, factura => factura.usuario)
     facturas:Factura[]
+
+    @OneToMany(() => Venta, venta => venta.usuario) // Relación con Ventas
+    ventas: Venta[];
 
 
 }

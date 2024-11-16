@@ -6,10 +6,16 @@ const LoginForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const navigate = useNavigate(); // Inicializa useNavigate
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validar que ambos campos estén completos
+    if (!email || !password) {
+      setError('Por favor, ingresa tu email y contraseña');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:3000/auth/login', {
@@ -29,17 +35,16 @@ const LoginForm: React.FC = () => {
       const data = await response.json();
       setSuccess(data.success || 'Inicio de sesión exitoso');
 
-      // Decodificar el payload del token (opcional, usando una librería como jwt-decode)
+      // Guardar el token en localStorage
       const token = data.accessToken;
+      localStorage.setItem('accessToken', token);
+
+      // Decodificar el payload del token (opcional)
       const payload = JSON.parse(atob(token.split('.')[1]));
-
       console.log('Payload del token:', payload);
-      // Extraer información del payload según lo necesario
-      console.log('Nombre:', payload.nombre);
-      console.log('Roles:', payload.roles);
-      navigate('/sales'); // Asegúrate de que la ruta esté configurada correctamente
 
-
+      // Redirigir a la página de ventas
+      navigate('/sales');
     } catch (err) {
       setError('Error al conectar con el servidor');
       console.error(err);
