@@ -1,11 +1,17 @@
 // src/components/SalesForm.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode';
 
 interface Product {
   id: number;
   name: string;
   price: number;
   stock: number;
+}
+
+interface JwtPayload {
+  sub: string; // O el tipo que representa el ID del usuario
+  // Agrega otros campos si los necesitas
 }
 
 const productsFromDb: Product[] = [
@@ -18,6 +24,20 @@ const SalesForm: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Decodificar el token para obtener el ID del usuario
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken'); // O de donde estés almacenando el token
+    if (token) {
+      try {
+        const decoded: JwtPayload = jwtDecode(token);
+        setUserId(decoded.sub);
+      } catch (error) {
+        console.error('Error al decodificar el token:', error);
+      }
+    }
+  }, []);
 
   const handleProductSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const productId = parseInt(e.target.value);
@@ -39,8 +59,11 @@ const SalesForm: React.FC = () => {
   const handleSale = () => {
     if (selectedProduct && quantity <= selectedProduct.stock) {
       const updatedStock = selectedProduct.stock - quantity;
-      alert(`Venta realizada. Quedan ${updatedStock} unidades de ${selectedProduct.name}.`);
-      // Aquí actualizarías el stock en la base de datos
+
+      alert(`Venta realizada por el usuario con ID: ${userId}. 
+        Quedan ${updatedStock} unidades de ${selectedProduct.name}.`);
+
+      // Aquí actualizarías el stock en la base de datos o enviarías la venta al backend
       setSelectedProduct(null);
       setQuantity(1);
       setTotal(0);
@@ -53,6 +76,7 @@ const SalesForm: React.FC = () => {
     <div className="flex justify-center items-center h-screen bg-gray-800">
       <div className="backdrop-blur-md bg-white/30 p-6 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-center text-2xl font-semibold mb-4">Venta de Productos</h2>
+        {userId && <p className="text-sm text-gray-400 text-center">ID Usuario: {userId}</p>}
         <form className="space-y-4">
           <select onChange={handleProductSelect} className="w-full p-3 rounded-md bg-gray-800">
             <option value="">Seleccione un producto</option>
