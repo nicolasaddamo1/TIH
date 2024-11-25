@@ -11,8 +11,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { VentaModule } from './ventas/ventas.module';
 import { ReparacionModule } from './reparacion/reparacion.module';
 import { MetricsModule } from './metrics/metrics.module';
-import { MetricsService } from './metrics.service';
-import { MetricsController } from './metrics.controller';
 
 @Module({
   imports: [
@@ -32,7 +30,7 @@ import { MetricsController } from './metrics.controller';
       secret: process.env.JWT_SECRET,
     }),
     UsuarioModule, ProductoModule, AuthModule, VentaModule, ReparacionModule, MetricsModule],
-  controllers: [AppController, MetricsController],
-  providers: [AppService, MetricsService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
