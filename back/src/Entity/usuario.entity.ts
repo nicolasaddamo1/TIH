@@ -50,7 +50,7 @@ export class Usuario {
     @Column({type:"varchar", length:500, nullable: true})
     observaciones?: string
 
-    @OneToOne(()=>Service, service => service.usuario)
-    service:Service
+    @OneToOne(()=>Service, (service) => service.usuario)
+    service:Service[]
 
 }

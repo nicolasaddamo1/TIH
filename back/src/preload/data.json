@@ -1,0 +1,54 @@
+{
+    "usuarios": [
+      {
+        "dni": 12345678,
+        "nombre": "Juan",
+        "apellido": "Pérez",
+        "direccion": "Calle Falsa 123",
+        "fechaNacimiento": "1990-01-01",
+        "nroTelefono": 123456789,
+        "email": "juan.perez@example.com",
+        "role": "Usuario",
+        "isAdmin": false
+      },
+      {
+        "dni": 87654321,
+        "nombre": "María",
+        "apellido": "Gómez",
+        "direccion": "Avenida Siempreviva 742",
+        "fechaNacimiento": "1985-05-15",
+        "nroTelefono": 987654321,
+        "email": "maria.gomez@example.com",
+        "role": "Administrador",
+        "isAdmin": true
+      }
+    ],
+    "productos": [
+      {
+        "nombre": "Celular",
+        "precio": 50000,
+        "stock": 20,
+        "categoria": "Electrónica"
+      },
+      {
+        "nombre": "Laptop",
+        "precio": 120000,
+        "stock": 10,
+        "categoria": "Computadoras"
+      }
+    ],
+    "ventas": [
+      {
+        "usuarioId": "12345678",
+        "detalles": [
+          {
+            "productoId": "1",
+            "cantidad": 2,
+            "precioUnitario": 50000,
+            "total": 100000
+          }
+        ]
+      }
+    ]
+  }
+  

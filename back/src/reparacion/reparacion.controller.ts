@@ -6,8 +6,8 @@ export class ReparacionController {
    
    @Post('')
    async create(
-    @Body() 
+      
    ) {
-
+      return "Todavia no esta hecho"
    }
 }
