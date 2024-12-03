@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuario } from 'src/Entity/usuario.entity';
 import { Producto } from 'src/Entity/producto.entity';
+import { Caja } from 'src/Entity/caja.entity';
+import { Service } from 'src/Entity/service.entity';
 import { DetalleVenta, Venta } from 'src/Entity/venta.entity';
 import data from './data.json';
 import { Role } from 'src/enum/roles.enum';
+import { Comision } from 'src/enum/comision.enum';
+import { MedioDePago } from 'src/enum/medioDePago.enum';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-
 
 @Injectable()
 export class PreloadService {
@@ -21,6 +24,10 @@ export class PreloadService {
     private readonly ventaRepository: Repository<Venta>,
     @InjectRepository(DetalleVenta)
     private readonly detalleVentaRepository: Repository<DetalleVenta>,
+    @InjectRepository(Caja)
+    private readonly cajaRepository: Repository<Caja>,
+    @InjectRepository(Service)
+    private readonly serviceRepository: Repository<Service>,
   ) {}
 
   // Método para mapear roles
@@ -37,35 +44,30 @@ export class PreloadService {
     }
   }
 
-
   async preloadUsuarios() {
     const usuarios = data.usuarios;
-  
+
     for (const usuario of usuarios) {
-      const dni = Number(usuario.dni); // Conversión a número
-  
+      const dni = Number(usuario.dni);
+
       const existingUsuario = await this.usuarioRepository.findOneBy({ dni });
       if (!existingUsuario) {
         const mappedRole = this.mapRoleToEnum(usuario.role || 'Administrador');
-  
-        // Generar una contraseña predeterminada
-        const password = 'password123'; // Contraseña predeterminada
+        const password = 'password123';
         const hashedPassword = await bcrypt.hash(password, 10);
-  
-        // Agregar manualmente la contraseña al objeto
+
         const newUsuario = this.usuarioRepository.create({
           ...usuario,
-          dni, // Asignar el dni ya convertido
-          role: mappedRole, // Asegurar que role es del tipo correcto
-          id: uuidv4(), // Generar un UUID
-          password: hashedPassword, // Agregar la contraseña generada
+          dni,
+          role: mappedRole,
+          id: uuidv4(),
+          password: hashedPassword,
         });
-  
+
         await this.usuarioRepository.save(newUsuario);
       }
     }
   }
-  
 
   async preloadProductos() {
     const productos = data.productos;
@@ -75,6 +77,39 @@ export class PreloadService {
       if (!existingProducto) {
         const newProducto = this.productoRepository.create(producto);
         await this.productoRepository.save(newProducto);
+      }
+    }
+  }
+
+  async preloadCajas() {
+    const cajas = data.cajas;
+
+    for (const caja of cajas) {
+      const newCaja = this.cajaRepository.create({
+        ...caja,
+        id: uuidv4(),
+        fecha: new Date(),
+        medioDePago: MedioDePago[caja.medioDePago.toUpperCase()],
+        comision: Comision[caja.comision.toUpperCase()],
+      });
+
+      await this.cajaRepository.save(newCaja);
+    }
+  }
+
+  async preloadServices() {
+    const services = data.services;
+
+    for (const service of services) {
+      const usuario = await this.usuarioRepository.findOneBy({ id: service.usuarioId });
+      if (usuario) {
+        const newService = this.serviceRepository.create({
+          ...service,
+          id: uuidv4(),
+          usuario,
+        });
+
+        await this.serviceRepository.save(newService);
       }
     }
   }
@@ -105,6 +140,8 @@ export class PreloadService {
   async preloadAll() {
     await this.preloadUsuarios();
     await this.preloadProductos();
+    await this.preloadCajas();
+    await this.preloadServices();
     await this.preloadVentas();
     console.log('Base de datos inicializada con datos.');
   }
