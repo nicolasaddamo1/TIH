@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Factura } from "./factura.entity";
 import { IsBoolean } from "class-validator";
 import { Role } from "src/enum/roles.enum";
@@ -50,7 +50,7 @@ export class Usuario {
     @Column({type:"varchar", length:500, nullable: true})
     observaciones?: string
 
-    @OneToOne(()=>Service, (service) => service.usuario)
-    service:Service[]
-
+    @OneToOne(() => Service, service => service.usuario, { nullable: true, eager: true })
+    @JoinColumn()
+    service: Service[] | null;
 }

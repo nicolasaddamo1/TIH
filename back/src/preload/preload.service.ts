@@ -6,6 +6,9 @@ import { Producto } from 'src/Entity/producto.entity';
 import { DetalleVenta, Venta } from 'src/Entity/venta.entity';
 import data from './data.json';
 import { Role } from 'src/enum/roles.enum';
+import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
+
 
 @Injectable()
 export class PreloadService {
@@ -34,27 +37,35 @@ export class PreloadService {
     }
   }
 
-  async preloadUsuarios() {
-    
-    const usuarios = data.usuarios;
 
+  async preloadUsuarios() {
+    const usuarios = data.usuarios;
+  
     for (const usuario of usuarios) {
       const dni = Number(usuario.dni); // Conversión a número
   
       const existingUsuario = await this.usuarioRepository.findOneBy({ dni });
       if (!existingUsuario) {
-        // Mapea el string al enum si viene de `data.json`
         const mappedRole = this.mapRoleToEnum(usuario.role || 'Administrador');
   
+        // Generar una contraseña predeterminada
+        const password = 'password123'; // Contraseña predeterminada
+        const hashedPassword = await bcrypt.hash(password, 10);
+  
+        // Agregar manualmente la contraseña al objeto
         const newUsuario = this.usuarioRepository.create({
           ...usuario,
           dni, // Asignar el dni ya convertido
           role: mappedRole, // Asegurar que role es del tipo correcto
+          id: uuidv4(), // Generar un UUID
+          password: hashedPassword, // Agregar la contraseña generada
         });
+  
         await this.usuarioRepository.save(newUsuario);
       }
     }
   }
+  
 
   async preloadProductos() {
     const productos = data.productos;

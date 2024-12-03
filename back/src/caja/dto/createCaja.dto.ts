@@ -7,7 +7,7 @@ export class CreateCajaDto {
   precioTotal: number;
 
   @IsString({ each: true })
-  articulo: string[];
+  articulo: string;
 
   @IsEnum(MedioDePago)
   medioDePago: MedioDePago;

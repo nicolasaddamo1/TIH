@@ -12,7 +12,7 @@ export class Caja {
     
     @Column()
     //@onetomany
-    articulo: string[];
+    articulo: string;
     
     @Column({type:"enum", enum: MedioDePago})
     medioDePago: MedioDePago;

@@ -17,6 +17,7 @@ import { DetalleVenta, Venta } from './Entity/venta.entity';
 import { PreloadService } from './preload/preload.service';
 import { Caja } from './Entity/caja.entity';
 import { Factura } from './Entity/factura.entity';
+import { Service } from './Entity/service.entity';
 
 
 @Module({
@@ -41,7 +42,7 @@ import { Factura } from './Entity/factura.entity';
       }),
     }),
     // Configuración de TypeORM para entidades específicas
-    TypeOrmModule.forFeature([Usuario, Producto, Venta, DetalleVenta, Caja,Factura]),
+    TypeOrmModule.forFeature([Usuario, Producto, Venta, DetalleVenta, Caja, Factura, Service]),
     // Configuración de JWT
     JwtModule.register({
       global: true,

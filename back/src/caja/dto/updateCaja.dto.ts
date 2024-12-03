@@ -9,7 +9,7 @@ export class UpdateCajaDto {
 
   @IsOptional()
   @IsString({ each: true })
-  articulo?: string[];
+  articulo?: string;
 
   @IsOptional()
   @IsEnum(MedioDePago)
