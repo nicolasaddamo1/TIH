@@ -1,6 +1,8 @@
 import { Comision } from "src/enum/comision.enum";
 import { MedioDePago } from "src/enum/medioDePago.enum";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Usuario } from "./usuario.entity";
+import { Producto } from "./producto.entity";
 
 @Entity('caja')
 export class Caja {
@@ -10,20 +12,7 @@ export class Caja {
     @Column({type:"int"})
     precioTotal: number;
     
-    @Column()
-    //@onetomany
-    articulo: string;
-    
-    @Column({type:"enum", enum: MedioDePago})
-    medioDePago: MedioDePago;
-    
-    @Column({type:"varchar", length:50})
-    cliente: string;
-    
-    @Column({type:"int"})
-    nroTelefono: number;
-    
-    @Column({type:"varchar", length:250})
+    @Column({type:"varchar", length:500})
     observaciones?: string;
     
     @Column({type:"varchar", length:500})
@@ -34,8 +23,14 @@ export class Caja {
     
     @CreateDateColumn({ type: 'timestamp' })
     fecha: Date;
-    
-    @Column({type:"varchar", length:50})
-    //@onetomany
-    vendedor: string;
+
+    @Column({type:"enum", enum: MedioDePago})
+    medioDePago: MedioDePago;
+
+    @ManyToOne(() => Usuario, usuario => usuario.cajas, { eager: true })
+    vendedor: Usuario;
+
+    @ManyToMany(() => Producto, { cascade: true })
+    @JoinTable()
+    productos: Producto[];
 }

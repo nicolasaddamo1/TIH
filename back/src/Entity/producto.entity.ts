@@ -1,22 +1,26 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Caja } from "./caja.entity";
 
 @Entity("producto")
 export class Producto {
     @PrimaryGeneratedColumn('uuid')
-    id: string
+    id: string;
 
     @Column({type:"varchar", length:50})
-    nombre: string
+    nombre: string;
 
     @Column({type:"int"})
-    precio: number
+    precio: number;
 
     @Column({type:"int"})
-    stock: number
+    stock: number;
 
     @Column({type:"varchar", length:50, nullable: true})
-    imagen?: string
+    imagen?: string;
 
     @Column({type:"varchar", length:50})
-    categoria?: string
+    categoria?: string;
+
+    @ManyToMany(() => Caja, caja => caja.productos)
+    cajas: Caja[];
 }

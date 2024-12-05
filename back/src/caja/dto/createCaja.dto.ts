@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 import { Comision } from 'src/enum/comision.enum';
 import { MedioDePago } from 'src/enum/medioDePago.enum';
 
@@ -6,8 +6,8 @@ export class CreateCajaDto {
   @IsInt()
   precioTotal: number;
 
-  @IsString({ each: true })
-  articulo: string;
+  @IsUUID('4', { each: true })
+  productos: string[]; // Lista de IDs de productos
 
   @IsEnum(MedioDePago)
   medioDePago: MedioDePago;
@@ -31,8 +31,9 @@ export class CreateCajaDto {
 
   @IsEnum(Comision)
   comision: Comision;
-
+  
   @IsString()
   @MaxLength(50)
-  vendedor: string;
+  vendedor: string; // ID del usuario
 }
+

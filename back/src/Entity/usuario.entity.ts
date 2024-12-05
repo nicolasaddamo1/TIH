@@ -4,20 +4,21 @@ import { IsBoolean } from "class-validator";
 import { Role } from "src/enum/roles.enum";
 import { Service } from "./service.entity";
 import { Venta } from "./venta.entity";
+import { Caja } from "./caja.entity";
 
 @Entity('usuario')
 export class Usuario {
     @PrimaryGeneratedColumn('uuid')
-    id:string;
+    id: string;
 
     @Column({type:"int", unique:true})    
-    dni:number;
+    dni: number;
 
     @Column({type:"varchar", length:50})    
     nombre: string;
 
     @Column({type:"varchar", length:50})    
-    apellido:string;
+    apellido: string;
 
     @Column({type:"varchar", length:100})    
     direccion: string;
@@ -39,16 +40,16 @@ export class Usuario {
 
     @IsBoolean()
     @Column({type:"boolean"})    
-    isAdmin:boolean
+    isAdmin: boolean;
 
-    @OneToMany(type => Factura, factura => factura.usuario)
-    facturas:Factura[]
-    
-    @OneToMany(() => Venta, venta => venta.usuario) // Relación con Ventas
+    @OneToMany(() => Factura, factura => factura.usuario)
+    facturas: Factura[];
+
+    @OneToMany(() => Venta, venta => venta.usuario) 
     ventas: Venta[];
 
-    @Column({type:"varchar", length:500, nullable: true})
-    observaciones?: string
+    @OneToMany(() => Caja, caja => caja.vendedor)
+    cajas: Caja[];
 
     @OneToOne(() => Service, service => service.usuario, { nullable: true, eager: true })
     @JoinColumn()

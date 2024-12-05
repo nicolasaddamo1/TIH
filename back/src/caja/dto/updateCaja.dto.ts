@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 import { Comision } from 'src/enum/comision.enum';
 import { MedioDePago } from 'src/enum/medioDePago.enum';
 
@@ -8,8 +8,8 @@ export class UpdateCajaDto {
   precioTotal?: number;
 
   @IsOptional()
-  @IsString({ each: true })
-  articulo?: string;
+  @IsUUID('4', { each: true })
+  productos?: string[]; // Lista de IDs de productos
 
   @IsOptional()
   @IsEnum(MedioDePago)
@@ -39,7 +39,6 @@ export class UpdateCajaDto {
   comision?: Comision;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  vendedor?: string;
+  @IsUUID()
+  vendedor?: string; // ID del vendedor (usuario)
 }
