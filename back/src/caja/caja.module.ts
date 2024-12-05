@@ -4,7 +4,6 @@ import { CajaController } from './caja.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Caja } from 'src/Entity/caja.entity';
 import { Producto } from 'src/Entity/producto.entity';
-import { UsuarioModule } from 'src/usuario/usuario.module';
 import { Usuario } from 'src/Entity/usuario.entity';
 
 @Module({
