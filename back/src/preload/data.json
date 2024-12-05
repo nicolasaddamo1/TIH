@@ -27,31 +27,46 @@
   ],
   "productos": [
     {
-      "id": "1",
-      "nombre": "Celular",
-      "precio": 50000,
-      "stock": 20,
-      "categoria": "Electrónica"
-    },
-    {
-      "id": "2",
-      "nombre": "Laptop",
-      "precio": 120000,
-      "stock": 10,
-      "categoria": "Computadoras"
+      "id": "b3c2971e-72b1-4323-9a2a-8df5c963eec3",
+      "nombre": "Producto 1",
+      "precio": 100,
+      "stock": 10
     }
+  
   ],
   "ventas": [
     {
       "usuarioId": "550e8400-e29b-41d4-a716-446655440000",
       "detalles": [
         {
-          "productoId": "1",
+          "productoId": "b3c2971e-72b1-4323-9a2a-8df5c963eec3",
           "cantidad": 2,
           "precioUnitario": 50000,
           "total": 100000
         }
       ]
+    }
+  ],
+  "cajas": [
+    {
+      "precioTotal": 500,
+      "articulo": "Producto A",
+      "medioDePago": "EFECTIVO",
+      "cliente": "Carlos Lopez",
+      "nroTelefono": 123456789,
+      "observaciones": "Pago sin problemas",
+      "description": "Venta realizada",
+      "comision": "VENTA",
+      "vendedor": "Juan Perez"
+    }
+  ],
+  "services": [
+    {
+      "nombre": "Service A",
+      "descripcion": "Descripción del servicio A",
+      "costo": 200,
+      "estado": "activo",
+      "usuarioId": "1"
     }
   ]
 }
