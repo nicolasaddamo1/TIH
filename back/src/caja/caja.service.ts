@@ -51,27 +51,22 @@ export class CajaService {
       
 
       async createCaja(data: CreateCajaDto): Promise<Caja> {
+        // Buscar el vendedor por ID
         const vendedor = await this.usuarioRepository.findOne({ where: { id: data.vendedor } });
         if (!vendedor) {
           throw new Error('El vendedor especificado no existe.');
         }
-      
-        const productos = await this.productoRepository.find({
-            where: data.productos.map((id) => ({ id })),
-          });        if (productos.length !== data.productos.length) {
-          throw new Error('Algunos productos especificados no existen.');
-        }
-      
+    
+        const productos = JSON.stringify(data.productos);
+    
         const nuevaCaja = this.cajaRepository.create({
           ...data,
           vendedor,
-          productos, 
+          productos,
         });
-      
+    
         return this.cajaRepository.save(nuevaCaja);
       }
-      
-
     async deleteCaja(id: string) {
         return this.cajaRepository.delete(id);
     }

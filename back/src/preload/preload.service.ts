@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Usuario } from 'src/Entity/usuario.entity';
 import { Producto } from 'src/Entity/producto.entity';
 import { Caja } from 'src/Entity/caja.entity';
@@ -39,7 +39,7 @@ export class PreloadService {
       case 'usuario':
         return Role.USER;
       default:
-        throw new Error(`Role no válido: ${role}`);
+        return Role.USER;
     }
   }
 
@@ -53,7 +53,7 @@ export class PreloadService {
       const existingUsuario = await this.usuarioRepository.findOneBy({ dni });
       if (!existingUsuario) {
         console.log('Usuario no encontrado, creando uno nuevo:', usuario);
-        const mappedRole = this.mapRoleToEnum(usuario.role || 'Administrador');
+        const mappedRole = this.mapRoleToEnum(usuario.role);
         const password = 'password123';
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -61,7 +61,7 @@ export class PreloadService {
           ...usuario,
           dni,
           role: mappedRole,
-          id: uuidv4(),
+          id: usuario.id || uuidv4(), // Usar ID del JSON si existe
           password: hashedPassword,
         });
 
@@ -82,8 +82,8 @@ export class PreloadService {
         console.log('Producto no encontrado, creando uno nuevo:', producto);
         const newProducto = this.productoRepository.create({
           ...producto,
-          id: uuidv4(),
-          categoria: (producto as any).categoria || 'Sin Categoría',
+          id: producto.id || uuidv4(), // Usar ID del JSON si existe
+          categoria: producto.categoria || 'Sin Categoría',
         });
         await this.productoRepository.save(newProducto);
       } else {
@@ -93,7 +93,7 @@ export class PreloadService {
   }
 
   normalizeName(name: string): string {
-    return name.trim().toLowerCase();
+    return name ? name.trim().toLowerCase() : '';
   }
   
   async preloadCajas() {
@@ -101,11 +101,21 @@ export class PreloadService {
 
     for (const caja of cajas) {
       console.log('Procesando caja:', caja);
+      
+      // Búsqueda más flexible del vendedor
       const vendedor = await this.usuarioRepository.findOne({
-        where: {
-          nombre: this.normalizeName(caja.vendedor.split(' ')[0]),
-          apellido: this.normalizeName(caja.vendedor.split(' ')[1]),
-        },
+        where: [
+          // Intentar coincidir nombre completo exacto
+          { 
+            nombre: this.normalizeName(caja.vendedor.split(' ')[0]),
+            apellido: this.normalizeName(caja.vendedor.split(' ')[1]) 
+          },
+          // Buscar por coincidencia parcial
+          { 
+            nombre: Like(`%${this.normalizeName(caja.vendedor.split(' ')[0])}%`),
+            apellido: Like(`%${this.normalizeName(caja.vendedor.split(' ')[1])}%`)
+          }
+        ]
       });
 
       if (!vendedor) {
@@ -113,14 +123,21 @@ export class PreloadService {
         continue;
       }
 
+      // Manejar productos como array o string único
       const productosNombres = Array.isArray(caja.productos)
         ? caja.productos
         : [caja.productos];
 
+      // Buscar productos de manera más flexible
       const productos = await Promise.all(
         productosNombres.map(async (productoNombre) => {
           console.log('Buscando producto:', productoNombre);
-          const producto = await this.productoRepository.findOneBy({ nombre: productoNombre });
+          const producto = await this.productoRepository.findOne({
+            where: [
+              { nombre: productoNombre },
+              { nombre: Like(`%${productoNombre}%`) }
+            ]
+          });
           if (!producto) {
             console.warn(`Producto con nombre ${productoNombre} no encontrado, omitiendo este producto.`);
             return null;
@@ -150,15 +167,25 @@ export class PreloadService {
 
     for (const service of services) {
       console.log('Procesando servicio:', service);
-      const usuario = await this.usuarioRepository.findOneBy({ id: service.usuarioId });
+      
+      // Búsqueda más flexible del usuario
+      const usuario = await this.usuarioRepository.findOne({
+        where: [
+          { id: service.usuarioId },
+          { 
+            nombre: Like(`%${this.normalizeName(service.nombre)}%`),
+          }
+        ]
+      });
+
       if (!usuario) {
-        console.warn(`Usuario con ID ${service.usuarioId} no encontrado, omitiendo este servicio.`);
+        console.warn(`Usuario para servicio no encontrado, omitiendo: ${JSON.stringify(service)}`);
         continue;
       }
 
       const newService = this.serviceRepository.create({
         ...service,
-        id: uuidv4(),
+        id: service.id || uuidv4(), // Usar ID del JSON si existe
         usuario,
       });
 
@@ -171,20 +198,36 @@ export class PreloadService {
 
     for (const venta of ventas) {
       console.log('Procesando venta:', venta);
-      const usuario = await this.usuarioRepository.findOneBy({ id: venta.usuarioId });
+      
+      // Búsqueda más flexible del usuario
+      const usuario = await this.usuarioRepository.findOne({
+        where: [
+          { id: venta.usuarioId },
+          
+        ]
+      });
+
       if (!usuario) {
-        console.warn(`Usuario con ID ${venta.usuarioId} no encontrado, omitiendo esta venta.`);
+        console.warn(`Usuario para venta no encontrado, omitiendo: ${JSON.stringify(venta)}`);
         continue;
       }
 
       const detalles = await Promise.all(
         venta.detalles.map(async (detalle) => {
           console.log('Procesando detalle de venta:', detalle);
-          const producto = await this.productoRepository.findOneBy({ id: detalle.productoId });
+          
+          // Búsqueda más flexible del producto
+          const producto = await this.productoRepository.findOne({
+            where: [
+              { id: detalle.productoId },
+            ]
+          });
+
           if (!producto) {
-            console.warn(`Producto con ID ${detalle.productoId} no encontrado, omitiendo este detalle.`);
+            console.warn(`Producto para detalle de venta no encontrado, omitiendo: ${JSON.stringify(detalle)}`);
             return null;
           }
+          
           return this.detalleVentaRepository.create({
             ...detalle,
             producto,

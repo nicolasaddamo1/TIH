@@ -3,7 +3,6 @@ import { Factura } from "./factura.entity";
 import { IsBoolean } from "class-validator";
 import { Role } from "src/enum/roles.enum";
 import { Service } from "./service.entity";
-import { Venta } from "./venta.entity";
 import { Caja } from "./caja.entity";
 
 @Entity('usuario')
@@ -45,13 +44,10 @@ export class Usuario {
     @OneToMany(() => Factura, factura => factura.usuario)
     facturas: Factura[];
 
-    @OneToMany(() => Venta, venta => venta.usuario) 
-    ventas: Venta[];
-
     @OneToMany(() => Caja, caja => caja.vendedor)
     cajas: Caja[];
 
     @OneToOne(() => Service, service => service.usuario, { nullable: true, eager: true })
     @JoinColumn()
-    service: Service[] | null;
+    service: Service | null;
 }

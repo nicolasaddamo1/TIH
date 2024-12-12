@@ -18,7 +18,7 @@ export class CajaController {
 
     @Post()
     async createCaja(
-        @Body('data') data:CreateCajaDto
+        @Body() data:CreateCajaDto
     ) {
         return this.cajaService.createCaja(data);
     }

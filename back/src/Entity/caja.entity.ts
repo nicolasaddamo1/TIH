@@ -1,36 +1,35 @@
-import { Comision } from "src/enum/comision.enum";
-import { MedioDePago } from "src/enum/medioDePago.enum";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Usuario } from "./usuario.entity";
-import { Producto } from "./producto.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Usuario } from './usuario.entity';
 
 @Entity('caja')
 export class Caja {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-    
-    @Column({type:"int"})
+
+    @Column({ type: 'int' })
     precioTotal: number;
-    
-    @Column({type:"varchar", length:500})
-    observaciones?: string;
-    
-    @Column({type:"varchar", length:500})
-    description?: string;
-    
-    @Column({type:"enum", enum: Comision})
-    comision: Comision;
-    
-    @CreateDateColumn({ type: 'timestamp' })
-    fecha: Date;
 
-    @Column({type:"enum", enum: MedioDePago})
-    medioDePago: MedioDePago;
+    @Column({ type: 'varchar', length: 500 })
+    productos: string;
 
-    @ManyToOne(() => Usuario, usuario => usuario.cajas, { eager: true })
+    @Column({ type: 'varchar', length: 50 })
+    medioDePago: string;
+
+    @Column({ type: 'varchar', length: 100 })
+    cliente: string;
+
+    @Column({ type: 'int' })
+    nroTelefono: number;
+
+    @Column({ type: 'varchar', length: 500 })
+    observaciones: string;
+
+    @Column({ type: 'varchar', length: 100 })
+    description: string;
+
+    @Column({ type: 'varchar', length: 50 })
+    comision: string;
+
+    @ManyToOne(() => Usuario, usuario => usuario.cajas)
     vendedor: Usuario;
-
-    @ManyToMany(() => Producto, { cascade: true })
-    @JoinTable()
-    productos: Producto[];
 }

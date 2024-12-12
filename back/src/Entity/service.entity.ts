@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Usuario } from "./usuario.entity";
 
 @Entity("service")
@@ -11,8 +11,8 @@ export class Service {
 
     @Column({type:"varchar", length:500, nullable: false})
     descripcion: string;
-    
+
     @OneToOne(() => Usuario, usuario => usuario.service)
     @JoinColumn()
-    usuario: Usuario
+    usuario: Usuario;
 }

@@ -30,7 +30,8 @@
       "id": "b3c2971e-72b1-4323-9a2a-8df5c963eec3",
       "nombre": "Producto 1",
       "precio": 100,
-      "stock": 10
+      "stock": 10,
+      "categoria": "Categoria 1"
     }
   
   ],
@@ -62,6 +63,7 @@
   ],
   "services": [
     {
+      "id": "b3c2971e-72b1-4323-9a2a-8df5c963eec4",
       "nombre": "Service A",
       "descripcion": "Descripción del servicio A",
       "costo": 200,
