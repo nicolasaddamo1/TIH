@@ -1,74 +1,92 @@
 {
   "usuarios": [
     {
-      "id": "550e8400-e29b-41d4-a716-446655440000",
       "dni": 12345678,
       "nombre": "Juan",
       "apellido": "Pérez",
       "direccion": "Calle Falsa 123",
       "fechaNacimiento": "1990-01-01",
-      "nroTelefono": 123456789,
+      "nroTelefono": 1112345678,
       "email": "juan.perez@example.com",
       "role": "Usuario",
+      "password": "password123",
       "isAdmin": false
     },
     {
-      "id": "550e8400-e29b-41d4-a716-446655440001",
       "dni": 87654321,
       "nombre": "María",
-      "apellido": "Gómez",
+      "apellido": "González",
       "direccion": "Avenida Siempreviva 742",
-      "fechaNacimiento": "1985-05-15",
-      "nroTelefono": 987654321,
-      "email": "maria.gomez@example.com",
+      "fechaNacimiento": "1985-05-10",
+      "nroTelefono": 1123456789,
+      "email": "maria.gonzalez@example.com",
       "role": "Administrador",
+      "password": "securepass",
       "isAdmin": true
-    }
-  ],
-  "productos": [
-    {
-      "id": "b3c2971e-72b1-4323-9a2a-8df5c963eec3",
-      "nombre": "Producto 1",
-      "precio": 100,
-      "stock": 10,
-      "categoria": "Categoria 1"
-    }
-  
-  ],
-  "ventas": [
-    {
-      "usuarioId": "550e8400-e29b-41d4-a716-446655440000",
-      "detalles": [
-        {
-          "productoId": "b3c2971e-72b1-4323-9a2a-8df5c963eec3",
-          "cantidad": 2,
-          "precioUnitario": 50000,
-          "total": 100000
-        }
-      ]
-    }
-  ],
-  "cajas": [
-    {
-      "precioTotal": 500,
-      "productos": "Producto A",
-      "medioDePago": "EFECTIVO",
-      "cliente": "Carlos Lopez",
-      "nroTelefono": 123456789,
-      "observaciones": "Pago sin problemas",
-      "description": "Venta realizada",
-      "comision": "VENTA",
-      "vendedor": "Juan Perez"
     }
   ],
   "services": [
     {
-      "id": "b3c2971e-72b1-4323-9a2a-8df5c963eec4",
-      "nombre": "Service A",
-      "descripcion": "Descripción del servicio A",
-      "costo": 200,
-      "estado": "activo",
-      "usuarioId": "550e8400-e29b-41d4-a716-446655440000"
+      "precio": 1500,
+      "descripcion": "Servicio de mantenimiento",
+      "usuarioId": "569df967-4bfa-4b69-8181-d131f425cf7b"
+    },
+    {
+      "precio": 2000,
+      "descripcion": "Servicio técnico avanzado",
+      "usuarioId": "1c984b2f-b3b1-43e0-b538-c27d589df292"
+    }
+  ],
+  "cajas": [
+    {
+      "precioTotal": 3000,
+      "productos": "[\"uuid-del-producto-1\", \"uuid-del-producto-2\"]",
+      "medioDePago": "EFECTIVO",
+      "cliente": "Cliente A",
+      "nroTelefono": 1234567890,
+      "observaciones": "Sin observaciones",
+      "description": "Venta mayorista",
+      "comision": "ALTA",
+      "vendedorId": "569df967-4bfa-4b69-8181-d131f425cf7b"
+    },
+    {
+      "precioTotal": 4500,
+      "productos": "[\"uuid-del-producto-3\", \"uuid-del-producto-4\"]",
+      "medioDePago": "TARJETA",
+      "cliente": "Cliente B",
+      "nroTelefono": 1134572470,
+      "observaciones": "Revisar stock",
+      "description": "Venta minorista",
+      "comision": "MEDIA",
+      "vendedorId": "1c984b2f-b3b1-43e0-b538-c27d589df292"
+    }
+  ],
+  "facturas": [
+    {
+      "fecha": "2024-01-01",
+      "total": 3000,
+      "usuarioId": "569df967-4bfa-4b69-8181-d131f425cf7b"
+    },
+    {
+      "fecha": "2024-01-15",
+      "total": 4500,
+      "usuarioId": "1c984b2f-b3b1-43e0-b538-c27d589df292"
+    }
+  ],
+  "productos": [
+    {
+      "nombre": "Producto A",
+      "precio": 100,
+      "stock": 50,
+      "imagen": "imagen-a.jpg",
+      "categoria": "Electrónica"
+    },
+    {
+      "nombre": "Producto B",
+      "precio": 200,
+      "stock": 30,
+      "imagen": "imagen-b.jpg",
+      "categoria": "Ropa"
     }
   ]
 }

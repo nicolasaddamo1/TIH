@@ -12,5 +12,5 @@ export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOption
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: configService.get<boolean>('DB_SYNC', true),
   logging: configService.get<boolean>('DB_LOGGING', false),
-  dropSchema: configService.get<boolean>('DB_DROP_SCHEMA', true)
+  dropSchema: configService.get<boolean>('DB_DROP_SCHEMA', false)
 });

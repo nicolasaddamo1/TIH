@@ -21,6 +21,6 @@ export class Producto {
     @Column({type:"varchar", length:50})
     categoria?: string;
 
-    @ManyToMany(() => Caja, caja => caja.productos)
-    cajas: Caja[];
+    // @ManyToMany(() => Caja, caja => caja.productos)
+    // cajas: Caja[];
 }
