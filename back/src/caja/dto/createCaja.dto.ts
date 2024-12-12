@@ -7,7 +7,7 @@ export class CreateCajaDto {
   precioTotal: number;
 
   @IsUUID('4', { each: true })
-  productos: string[]; // Lista de IDs de productos
+  productos: string[]; 
 
   @IsEnum(MedioDePago)
   medioDePago: MedioDePago;
@@ -31,9 +31,7 @@ export class CreateCajaDto {
 
   @IsEnum(Comision)
   comision: Comision;
-  
-  @IsString()
-  @MaxLength(50)
-  vendedor: string; // ID del usuario
-}
 
+  @IsUUID('4')
+  vendedor: string; 
+}
