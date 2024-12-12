@@ -30,6 +30,6 @@ export class Caja {
     @Column({ type: 'varchar', length: 50 })
     comision: string;
 
-    @ManyToOne(() => Usuario, usuario => usuario.cajas)
+    @ManyToOne(() => Usuario, usuario => usuario.cajas, { cascade: true, onDelete: 'CASCADE' })
     vendedor: Usuario;
 }

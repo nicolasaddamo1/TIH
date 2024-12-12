@@ -12,6 +12,6 @@ export class Factura {
     @Column({type:"int"})
     total: number;
 
-    @ManyToOne(() => Usuario, usuario => usuario.facturas)
+    @ManyToOne(() => Usuario, usuario => usuario.facturas, { cascade: true, onDelete: 'CASCADE' })
     usuario: Usuario;
 }

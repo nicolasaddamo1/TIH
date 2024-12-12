@@ -12,7 +12,7 @@ export class Service {
     @Column({type:"varchar", length:500, nullable: false})
     descripcion: string;
 
-    @OneToOne(() => Usuario, usuario => usuario.service)
+    @OneToOne(() => Usuario, usuario => usuario.service, { cascade: true, onDelete: 'CASCADE' })
     @JoinColumn()
     usuario: Usuario;
 }

@@ -51,7 +51,6 @@ export class CajaService {
       
 
       async createCaja(data: CreateCajaDto): Promise<Caja> {
-        // Buscar el vendedor por ID
         const vendedor = await this.usuarioRepository.findOne({ where: { id: data.vendedor } });
         if (!vendedor) {
           throw new Error('El vendedor especificado no existe.');

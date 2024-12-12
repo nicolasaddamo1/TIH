@@ -46,7 +46,13 @@ export class UsuarioService {
         if (!foundedUser) {
             throw new Error('User not found')
         }
-        return await this.usuarioRepository.delete(foundedUser)
+        try {
+            const userDeleted =await this.usuarioRepository.delete(id)
+            return userDeleted
+        } catch (error) {
+            console.log(error)
+            return error
+        }
     }
 
 
