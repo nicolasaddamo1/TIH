@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import preloadData from './data.json';
 import { Usuario } from 'src/Entity/usuario.entity';
 import { Caja } from 'src/Entity/caja.entity';
-import { Producto } from 'src/Entity/producto.entity';  // Asegúrate de importar Producto
+import { Producto } from 'src/Entity/producto.entity'; 
 import { Service } from 'src/Entity/service.entity';
 import { Factura } from 'src/Entity/factura.entity';
 import { Role } from 'src/enum/roles.enum';
@@ -21,10 +21,10 @@ export class PreloadService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     try {
-      // await this.preloadUsuarios();
-      // await this.preloadServicios();
+      await this.preloadUsuarios();
+      await this.preloadServicios();
       await this.preloadCajas();
-      await this.preloadProductos(); // Llamar al método de productos
+      await this.preloadProductos();
       await this.preloadFacturas();
       console.log('Preload completado exitosamente.');
     } catch (error) {

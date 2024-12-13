@@ -1,6 +1,7 @@
 {
   "usuarios": [
     {
+      "id": "569df967-4bfa-4b69-8181-d131f425cf7b",
       "dni": 12345678,
       "nombre": "Juan",
       "apellido": "Pérez",
@@ -13,6 +14,7 @@
       "isAdmin": false
     },
     {
+      "id": "1c984b2f-b3b1-43e0-b538-c27d589df292",
       "dni": 87654321,
       "nombre": "María",
       "apellido": "González",
@@ -40,7 +42,7 @@
   "cajas": [
     {
       "precioTotal": 3000,
-      "productos": "[\"uuid-del-producto-1\", \"uuid-del-producto-2\"]",
+      "productos": ["1440f790-7224-4048-b559-f3aee102a227", "f77cb2cb-56ee-4faf-9670-448749c804e5"],
       "medioDePago": "EFECTIVO",
       "cliente": "Cliente A",
       "nroTelefono": 1234567890,
@@ -51,7 +53,7 @@
     },
     {
       "precioTotal": 4500,
-      "productos": "[\"uuid-del-producto-3\", \"uuid-del-producto-4\"]",
+      "productos": ["7031c794-8f3d-4c35-8e70-ac373a5e2213", "6f0ad7e2-60bd-4913-bfbf-613175effd30"],
       "medioDePago": "TARJETA",
       "cliente": "Cliente B",
       "nroTelefono": 1134572470,
@@ -75,6 +77,7 @@
   ],
   "productos": [
     {
+      "id": "1440f790-7224-4048-b559-f3aee102a227",
       "nombre": "Producto A",
       "precio": 100,
       "stock": 50,
@@ -82,6 +85,23 @@
       "categoria": "Electrónica"
     },
     {
+      "id": "f77cb2cb-56ee-4faf-9670-448749c804e5",
+      "nombre": "Producto A",
+      "precio": 100,
+      "stock": 50,
+      "imagen": "imagen-a.jpg",
+      "categoria": "Electrónica"
+    },
+    {
+      "id": "6f0ad7e2-60bd-4913-bfbf-613175effd30",
+      "nombre": "Producto A",
+      "precio": 100,
+      "stock": 50,
+      "imagen": "imagen-a.jpg",
+      "categoria": "Electrónica"
+    },
+    {
+      "id": "7031c794-8f3d-4c35-8e70-ac373a5e2213",
       "nombre": "Producto B",
       "precio": 200,
       "stock": 30,

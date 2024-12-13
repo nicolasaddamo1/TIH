@@ -9,8 +9,8 @@ export class Caja {
     @Column({ type: 'int' })
     precioTotal: number;
 
-    @Column({ type: 'varchar', length: 500 })
-    productos: string;
+    @Column('simple-array', { nullable: true })
+    productos: string[];
 
     @Column({ type: 'varchar', length: 50 })
     medioDePago: string;
@@ -20,6 +20,9 @@ export class Caja {
 
     @Column({ type: 'int' })
     nroTelefono: number;
+
+    @Column({ type: 'date', default: () => "CURRENT_DATE" })
+    fecha: Date;
 
     @Column({ type: 'varchar', length: 500 })
     observaciones: string;
