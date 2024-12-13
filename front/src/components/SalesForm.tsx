@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {jwtDecode} from 'jwt-decode';
-import * as dotenv from 'dotenv';
 
-dotenv.config();
 // Interfaces
 interface Product {
   id: string;
@@ -38,11 +36,11 @@ const SalesForm: React.FC = () => {
       }
     }
   }, []);
-  
+  console.log(import.meta.env.VITE_API_URL)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${process.env.API_URL} + /productos`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/producto`);
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -99,7 +97,7 @@ const SalesForm: React.FC = () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/ventas', {
+      const response = await fetch(`http://localhost:3000/ventas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

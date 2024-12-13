@@ -1,4 +1,4 @@
-// src/components/ProductForm.tsx
+//src/components/ProductForm.tsx
 import React, { useState } from 'react';
 
 interface Product {
