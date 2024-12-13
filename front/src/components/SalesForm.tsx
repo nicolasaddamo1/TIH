@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {jwtDecode} from 'jwt-decode';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 // Interfaces
 interface Product {
   id: string;
@@ -20,10 +22,11 @@ const SalesForm: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
-  const [total, setTotal] = useState<number>(0);
+  const [_total, setTotal] = useState<number>(0);
   const [userId, setUserId] = useState<string | null>(null);
   const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
 
+  
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -35,11 +38,11 @@ const SalesForm: React.FC = () => {
       }
     }
   }, []);
-
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/producto');
+        const response = await fetch(`${process.env.API_URL} + /productos`);
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -48,7 +51,7 @@ const SalesForm: React.FC = () => {
     };
     fetchProducts();
   }, []);
-
+  
   const handleProductSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const productId = e.target.value;
     const product = products.find((p) => p.id === productId) || null;

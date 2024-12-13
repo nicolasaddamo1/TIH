@@ -28,7 +28,7 @@ const MetricsByDateRange: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/caja/by-date-range?startDate=${startDate}&endDate=${endDate}`
+        `${process.env.API_URL}/caja/by-date-range?startDate=${startDate}&endDate=${endDate}`
       );
       if (response.ok) {
         const data: Caja[] = await response.json();

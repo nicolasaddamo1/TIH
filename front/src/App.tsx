@@ -3,7 +3,6 @@ import LoginForm from './components/LoginForm'
 import MetricsByDateRange from './components/MetricsByDateRange'
 import ProductForm from './components/ProductForm'
 import SalesForm from './components/SalesForm'
-import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 function App() {

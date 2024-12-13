@@ -1,5 +1,8 @@
 {
   "files": [],
+  "compilerOptions": {
+    "noUnusedLocals": false // Ignora variables locales no usadas
+  },
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
