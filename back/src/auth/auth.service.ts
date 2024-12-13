@@ -16,7 +16,6 @@ export class AuthService {
 
     ){}
     async login(email: string, password: string) {
-        console.log(email, password);
         const user = await this.usuarioRepository.findOne({ where: { email } });
         if (!user) throw new NotFoundException('Credenciales inválidas.');
     
