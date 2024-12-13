@@ -25,7 +25,7 @@ const ServiceForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/service', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/service`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
