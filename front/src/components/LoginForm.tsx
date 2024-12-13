@@ -44,7 +44,7 @@ const LoginForm: React.FC = () => {
       console.log('Payload del token:', payload);
 
       // Redirigir a la página de ventas
-      navigate('/sales');
+      navigate('/service');
     } catch (err) {
       setError('Error al conectar con el servidor');
       console.error(err);

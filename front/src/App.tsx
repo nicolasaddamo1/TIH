@@ -13,9 +13,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LoginForm />} />
+          <Route path="/service" element={<ServiceForm />} />
           <Route path="/sales" element={<SalesForm />} />
           <Route path="/products" element={<ProductForm />} />
-          <Route path="/service" element={<ServiceForm />} />
           <Route path="/metrics" element={<MetricsByDateRange />} />
         </Routes>
       </Router>

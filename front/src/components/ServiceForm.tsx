@@ -1,50 +1,87 @@
-// src/components/ServiceForm.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode';
 
 interface Service {
-  name: string;
-  description: string;
-  price: string;
-  estimatedTime: string;
+  usuario: string;
+  descripcion: string;
+  precio: number;
 }
 
 const ServiceForm: React.FC = () => {
   const [service, setService] = useState<Service>({
-    name: '',
-    description: '',
-    price: '',
-    estimatedTime: '',
+    usuario: '',
+    descripcion: '',
+    precio: 0,
   });
   const [message, setMessage] = useState<string | null>(null);
 
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken'); // Usa un nombre consistente
+    console.log('Token:', token);
+    if (token) {
+      try {
+        // Decodifica el token para obtener el usuario
+        const decodedToken: { sub: string } = jwtDecode(token);
+        console.log('Decoded Token:', decodedToken);
+        setService((prevService) => ({
+          ...prevService,
+          usuario: decodedToken.sub, // Ajusta según la estructura de tu token
+        }));
+      } catch (error) {
+        console.error('Error al decodificar el token:', error);
+      }
+    } else {
+      console.warn('No se encontró un token válido.');
+    }
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setService((prevService) => ({ ...prevService, [name]: value }));
+    setService((prevService) => ({
+      ...prevService,
+      [name]: name === 'precio' ? parseFloat(value) || 0 : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        setMessage('Error: No se encontró el token de autenticación.');
+        return;
+      }
+      const decodedToken: { sub: string } = jwtDecode(token);
+
+      console.log('Service to be sent:', service);  // Agrega un log para ver qué datos estás enviando
+  
       const response = await fetch(`${import.meta.env.VITE_API_URL}/service`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(service),
+        body: JSON.stringify(service),  // Aquí se está enviando el objeto `service`
       });
-
+  
       if (response.ok) {
         setMessage('Servicio creado correctamente');
-        setService({ name: '', description: '', price: '', estimatedTime: '' });
+        setService({
+          usuario: decodedToken.sub,  // Resetea el usuarioId en caso de ser necesario
+          descripcion: '',
+          precio: 0,
+        });
       } else {
-        setMessage('Error al crear el servicio');
-        console.error('Error:', response.statusText);
+        const errorResponse = await response.json();
+        setMessage(`Error al crear el servicio: ${errorResponse.message || response.statusText}`);
+        console.error('Error:', errorResponse);
       }
     } catch (error) {
       setMessage('Error al crear el servicio');
       console.error(error);
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-800">
@@ -56,34 +93,18 @@ const ServiceForm: React.FC = () => {
           </p>
         )}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Nombre del servicio"
-            value={service.name}
-            onChange={handleChange}
-            className="w-full p-3 rounded-md bg-gray-50"
-          />
           <textarea
-            name="description"
+            name="descripcion"
             placeholder="Descripción"
-            value={service.description}
+            value={service.descripcion}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-50"
           />
           <input
             type="number"
-            name="price"
+            name="precio"
             placeholder="Precio"
-            value={service.price}
-            onChange={handleChange}
-            className="w-full p-3 rounded-md bg-gray-50"
-          />
-          <input
-            type="text"
-            name="estimatedTime"
-            placeholder="Tiempo estimado"
-            value={service.estimatedTime}
+            value={service.precio}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-50"
           />
