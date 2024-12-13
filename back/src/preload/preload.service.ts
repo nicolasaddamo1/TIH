@@ -8,6 +8,7 @@ import { Producto } from 'src/Entity/producto.entity';
 import { Service } from 'src/Entity/service.entity';
 import { Factura } from 'src/Entity/factura.entity';
 import { Role } from 'src/enum/roles.enum';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class PreloadService implements OnApplicationBootstrap {
@@ -39,11 +40,17 @@ export class PreloadService implements OnApplicationBootstrap {
         const exists = await this.usuarioRepository.findOne({ where: { email: usuario.email } });
         if (!exists) {
           const role = Role[usuario.role as keyof typeof Role];
+  
+          // Encripta la contraseña antes de crear el usuario
+          const salt = await bcrypt.genSalt(10); // Genera un salt (puedes ajustar el factor)
+          const hashedPassword = await bcrypt.hash(usuario.password, salt);
+  
           const nuevoUsuario = this.usuarioRepository.create({
             ...usuario,
             role,
+            password: hashedPassword, // Guarda la contraseña encriptada
           });
-
+  
           await this.usuarioRepository.save(nuevoUsuario);
           console.log(`Usuario ${usuario.nombre} ${usuario.apellido} guardado con éxito.`);
         } else {
@@ -54,7 +61,7 @@ export class PreloadService implements OnApplicationBootstrap {
       }
     }
   }
-
+  
   private async preloadProductos() {
     console.log('Cargando productos...');
     for (const producto of preloadData.productos) {

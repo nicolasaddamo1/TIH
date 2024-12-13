@@ -6,16 +6,21 @@ import { Usuario } from 'src/Entity/usuario.entity';
 @Controller('auth')
 export class AuthController {
     constructor(
-        private readonly authService: AuthService
+        private authService: AuthService
     ){}
 
     @Post('login')
-    async logIn(@Body()user:LoginUserDto):Promise<any>{
+    async logIn(
+        @Body()user:LoginUserDto
+    )
+        {
         return this.authService.login(user.email, user.password)
     }
 
     @Post('signup')
-    async signUp(@Body()user:CreateUserDto):Promise<Usuario>{
+    async signUp(
+        @Body()user:CreateUserDto
+    ):Promise<Usuario>{
         return this.authService.signUp(user)
     }
 

@@ -51,6 +51,8 @@ import { PreloadService } from './preload/preload.service';
     ReparacionModule,
     MetricsModule,
     CajaModule,
+    ReparacionModule
+    
   ],
   controllers: [AppController],
   providers: [AppService, PreloadService],
