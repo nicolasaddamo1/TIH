@@ -20,6 +20,16 @@ export class CajaService {
         return this.cajaRepository.find({take: limit});
     }
 
+    async getCajasByDateRange(startDate: string, endDate: string): Promise<Caja[]> {
+      const queryBuilder = this.cajaRepository.createQueryBuilder('caja');
+  
+      return queryBuilder
+          .where('caja.fecha >= :startDate', { startDate })
+          .andWhere('caja.fecha <= :endDate', { endDate })
+          .getMany();
+  }
+  
+
     async updateCaja(id: string, data: UpdateCajaDto): Promise<void> {
         let vendedor = null;
       
@@ -61,7 +71,7 @@ export class CajaService {
         const nuevaCaja = this.cajaRepository.create({
           ...data,
           vendedor,
-          productos,
+          productos: data.productos,
         });
     
         return this.cajaRepository.save(nuevaCaja);

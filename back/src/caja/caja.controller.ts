@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CajaService } from './caja.service';
 import { UpdateCajaDto } from './dto/updateCaja.dto';
 import { CreateCajaDto } from './dto/createCaja.dto';
+import { Caja } from 'src/Entity/caja.entity';
 
 @Controller('caja')
 export class CajaController {
@@ -14,6 +15,14 @@ export class CajaController {
         @Body('limit') limit:number
     ) {  
         return this.cajaService.getAllCajas(limit);
+    }
+
+    @Get('by-date-range')
+    async getCajasByDateRange(
+        @Query('startDate') startDate: string,
+        @Query('endDate') endDate: string,
+    ): Promise<Caja[]> {
+        return this.cajaService.getCajasByDateRange(startDate, endDate);
     }
 
     @Post()
