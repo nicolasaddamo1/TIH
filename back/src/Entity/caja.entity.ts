@@ -17,7 +17,7 @@ export class Caja {
     @JoinTable()  // Relación de muchos a muchos entre cajas y productos
     productos: Producto[];
 
-    @Column({ type: 'enum', enum: MedioDePago })
+    @Column({ type: 'enum', enum: MedioDePago, default:MedioDePago.MERCADOPAGO })
     medioDePago: MedioDePago;
 
     @ManyToOne(() => Cliente, { eager: true })  // Relaciona con la entidad Cliente
@@ -35,7 +35,7 @@ export class Caja {
     @Column({ type: 'varchar', length: 100, nullable: true })
     description: string;
 
-    @Column({ type: 'enum', enum: Comision })
+    @Column({ type: 'enum', enum: Comision, default:Comision.VENTA })
     comision: Comision;
 
     @ManyToOne(() => Usuario, usuario => usuario.cajas, { cascade: true, onDelete: 'CASCADE' })
