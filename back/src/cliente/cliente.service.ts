@@ -16,9 +16,10 @@ export class ClienteService{
         return this.clienteRepository.find()
     }
 
-    async getClients(dni:number):Promise<string>{
+    async getClients(dni:number){
         const cliente = await this.clienteRepository.findOneBy({dni})
-        return cliente.id
+        console.log("este es el cliente encontrado:", cliente)
+        return cliente
     }
     
     async updateClients(id:string, data){

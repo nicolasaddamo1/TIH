@@ -29,6 +29,7 @@ export class PreloadService implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     try {
       await this.preloadUsuarios();
+      await this.preloadClientes();
       await this.preloadCajas();
       await this.preloadProductos();
       await this.preloadCellphones(); // Llamar a la función de precarga de celulares
@@ -179,6 +180,29 @@ export class PreloadService implements OnApplicationBootstrap {
         }
       } catch (error) {
         console.error(`Error al cargar el celular ${cellphone.nombre}:`, error);
+      }
+    }
+  }
+  private async preloadClientes(): Promise<void> {
+    console.log('Cargando clientes...');
+    for (const cliente of preloadData.clientes) {
+      try {
+        // Verificar si el cliente ya existe en la base de datos por su DNI
+        const exists = await this.clienteRepository.findOne({ where: { dni: cliente.dni } });
+        if (!exists) {
+          // Crear un nuevo cliente basado en el archivo de datos
+          const nuevoCliente = this.clienteRepository.create({
+            ...cliente,
+          });
+
+          // Guardar el cliente en la base de datos
+          await this.clienteRepository.save(nuevoCliente);
+          console.log(`Cliente con DNI ${cliente.dni} guardado con éxito.`);
+        } else {
+          console.log(`Cliente con DNI ${cliente.dni} ya existe, omitiendo.`);
+        }
+      } catch (error) {
+        console.error(`Error al cargar el cliente con DNI ${cliente.dni}:`, error);
       }
     }
   }

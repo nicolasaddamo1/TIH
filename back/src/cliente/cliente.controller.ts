@@ -13,9 +13,11 @@ export class ClienteController{
     }
     @Get(':dni')
     async getClients(
-        @Param('dni') dni:number
-    ):Promise<string>{
-        return this.clientesService.getClients(dni)
+        @Param('dni') dni:string
+    ){
+        const dni2 = parseInt(dni)
+        console.log(dni2)
+        return this.clientesService.getClients(dni2)
     }
     @Put(':id')
     async updateClients(

@@ -129,5 +129,14 @@
       "estado":"Usado",
       "descripcionEstado":"Pantalla estallada"
     }
-  ]
+  ],
+  "clientes":[{
+    "id": "a1b2c3d4-e5f6-7890-abcd-1234567890ef",
+    "dni": 3333,
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "direccion": "Calle Falsa 123",
+    "nroTelefono": 123456789
+  }]
+  
 }
