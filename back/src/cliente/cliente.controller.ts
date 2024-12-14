@@ -1,9 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common'
+import { ClienteService } from './cliente.service'
 
 @Controller('clientes')
 export class ClienteController{
     constructor(
-        private clientesService:ClientesService
+        private clientesService: ClienteService
     ){}
 
     @Get()
@@ -13,8 +14,8 @@ export class ClienteController{
     @Get(':dni')
     async getClients(
         @Param('dni') dni:number
-    ){
-        return this.clientesService.getAllClients(dni)
+    ):Promise<string>{
+        return this.clientesService.getClients(dni)
     }
     @Put(':id')
     async updateClients(

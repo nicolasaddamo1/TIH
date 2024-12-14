@@ -18,6 +18,7 @@ import { Service } from './Entity/service.entity';
 import { PreloadService } from './preload/preload.service';
 import { Cellphone } from './Entity/cellphone.entity';
 import { Cliente } from './Entity/cliente.entity';
+import { ClienteModule } from './cliente/cliente.module';
 
 
 @Module({
@@ -53,6 +54,7 @@ import { Cliente } from './Entity/cliente.entity';
     ReparacionModule,
     MetricsModule,
     CajaModule,
+    ClienteModule,
     ReparacionModule
     
   ],
@@ -64,7 +66,5 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     
-    // Llama al método de precarga al inicializar el módulo
-    // await this.preloadService.preloadAll();
   }
 }
