@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 // Interfaces
-interface Product {
+interface Producto {
   id: string;
   nombre: string;
   precio: number;
@@ -11,72 +12,47 @@ interface Product {
   imagen?: string;
 }
 
-interface JwtPayload {
-  sub: string;
-}
-
-// Enums (copiados de tu descripción)
-enum MedioDePago {
-  EFECTIVO = 'Efectivo',
-  MERCADOPAGO = 'MercadoPago',
-  LAURA = 'Laura',
-  CUENTADNI = 'CuentaDNI'
-}
-
-enum Comision {
-  VENTA = 'Venta',
-  SERVICIO = 'Servicio',
-  CELULAR = 'Celular'
+// Enums
+enum Categoria {
+  ACCESORIOS = 'accesorios',
+  CELULARES = 'celulares',
 }
 
 // Componente principal
 const SalesForm: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [quantity, setQuantity] = useState<number>(1);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
-  const [category, setCategory] = useState<'accesorios' | 'celulares'>('accesorios');
-
-  // Nuevos estados para Caja
-  const [medioDePago, setMedioDePago] = useState<MedioDePago>(MedioDePago.EFECTIVO);
-  const [comision, setComision] = useState<Comision>(Comision.VENTA);
-  const [clientType, setClientType] = useState<'nuevo' | 'agendado'>('agendado');
-  const [clientDni, setClientDni] = useState<string>('');
-  const [clientId, setClientId] = useState<string | null>(null);
-  const [newClientData, setNewClientData] = useState({
+  const [clienteDni, setClienteDni] = useState('');
+  const [cliente, setCliente] = useState(null);
+  const [isNuevoCliente, setIsNuevoCliente] = useState(false);
+  const [clienteData, setClienteData] = useState({
+    dni: '',
     nombre: '',
     apellido: '',
-    telefono: '',
-    email: ''
+    direccion: '',
+    nroTelefono: '',
   });
-  const [observaciones, setObservaciones] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-
-  // Decodificar el JWT y obtener el userId
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      try {
-        const decoded: JwtPayload = jwtDecode(token);
-        setUserId(decoded.sub);
-      } catch (error) {
-        console.error('Error al decodificar el token:', error);
-      }
-    }
-  }, []);
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [category, setCategory] = useState<Categoria>(Categoria.ACCESORIOS);
+  const [cart, setCart] = useState<{ product: Producto; quantity: number }[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<string>(''); 
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [precioTotal, setPrecioTotal] = useState(0);
+  const [medioDePago, setMedioDePago] = useState('MercadoPago');
+  const [observaciones, setObservaciones] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [vendedorId, setVendedorId] = useState('');
 
   // Obtener productos según la categoría seleccionada
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          category === 'accesorios'
+          category === Categoria.ACCESORIOS
             ? `${import.meta.env.VITE_API_URL}/producto`
             : `${import.meta.env.VITE_API_URL}/producto/celulares`
         );
         const data = await response.json();
-        setProducts(data);
+        setProductos(data);
+        setSelectedProduct(data.length > 0 ? data[0].id : ''); // Seleccionar el primer producto si existen
       } catch (error) {
         console.error('Error al obtener productos:', error);
       }
@@ -84,247 +60,296 @@ const SalesForm: React.FC = () => {
     fetchProducts();
   }, [category]);
 
-  // Buscar cliente por DNI
-  const handleSearchClient = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/clientes/${clientDni}`);
-      if (response.ok) {
-        const cliente = await response.json();
-        alert('Cliente encontrado');
-        setClientId(cliente.id);
-      } else {
-        alert('Cliente no encontrado');
+  // Obtener ID del vendedor desde el token
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      try {
+        const decoded = jwtDecode<JwtPayload>(token);
+        if (decoded.sub && typeof decoded.sub === 'string') {
+          setVendedorId(decoded.sub); // Asegúrate que este es un UUID válido
+        } else {
+          console.error('El token no contiene un sub válido');
+        }
+      } catch (error) {
+        console.error('Error al decodificar el token', error);
       }
-    } catch (error) {
-      console.error('Error al buscar cliente:', error);
+    }
+  }, []);
+
+  // Manejar la adición al carrito
+  const handleAddToCart = () => {
+    const product = productos.find((p) => p.id === selectedProduct);
+    if (!product) return;
+
+    const existingItem = cart.find((item) => item.product.id === product.id);
+    if (existingItem) {
+      setCart(
+        cart.map((item) =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + selectedQuantity }
+            : item
+        )
+      );
+    } else {
+      setCart([...cart, { product, quantity: selectedQuantity }]);
     }
   };
 
-  // Crear nuevo cliente
-  const handleCreateClient = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/clientes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...newClientData,
-          dni: clientDni
-        })
-      });
-      if (response.ok) {
-        const cliente = await response.json().catch(()=>response);
-        setClientId(cliente.id);
-        alert('Cliente creado exitosamente');
-      } else {
-        alert('Error al crear cliente');
-      }
-    } catch (error) {
-      console.error('Error al crear cliente:', error);
-    }
+  // Manejar eliminación de productos del carrito
+  const handleRemoveFromCart = (productId: string) => {
+    setCart(cart.filter((item) => item.product.id !== productId));
   };
 
-  // Resto de funciones anteriores (handleProductSelect, handleAddToCart, etc.) se mantienen igual
-
-  const handleSale = async () => {
-    if (!userId || !clientId || cart.length === 0) {
-      alert('Debes agregar productos al carrito, seleccionar un cliente y estar autenticado.');
-      return;
-    }
-    try {
-      // Preparar datos para crear Caja
-      const cajaData = {
-        precioTotal: calculateTotalPrice(),
-        productos: cart.map(item => item.product.id),
-        medioDePago,
-        cliente: clientId,
-        vendedor: userId,
-        comision,
-        observaciones,
-        description
-      };
-
-      // Primero realizar la venta
-      const ventaResponse = await fetch(`${import.meta.env.VITE_API_URL}/ventas`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          items: cart.map((item) => ({
-            productId: item.product.id,
-            quantity: item.quantity,
-          })),
-        }),
-      });
-
-      // Luego crear el registro de Caja
-      const cajaResponse = await fetch(`${import.meta.env.VITE_API_URL}/caja`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cajaData),
-      });
-
-      if (ventaResponse.ok && cajaResponse.ok) {
-        alert('Venta y registro de caja realizados exitosamente.');
-        // Resetear estados
-        setCart([]);
-        setClientId(null);
-        setClientDni('');
-        setObservaciones('');
-        setDescription('');
-      } else {
-        alert('Hubo un problema al realizar la venta o registrar la caja.');
-      }
-    } catch (error) {
-      console.error('Error al realizar la venta:', error);
-    }
-  };
+  // Calcular el precio total del carrito
   const calculateTotalPrice = () => {
     return cart.reduce((sum, item) => sum + item.product.precio * item.quantity, 0);
   };
-  
+
+  // Manejar búsqueda de cliente
+  const handleClienteSearch = () => {
+    if (clienteDni) {
+      axios.get(`${import.meta.env.VITE_API_URL}/clientes/${clienteDni}`).then((response) => {
+        if (response.data) {
+          setCliente(response.data.id);
+          alert('Cliente encontrado');
+        } else {
+          alert('Cliente no encontrado');
+        }
+      });
+    }
+  };
+
+  // Manejar el envío del formulario (Registrar Venta)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Si el cliente es nuevo, enviar los datos para crear el cliente
+    if (isNuevoCliente && clienteData.dni && clienteData.nombre && clienteData.apellido) {
+      try {
+        const newCliente = await axios.post('/clientes', clienteData);
+        setCliente(newCliente.data);  // Establecer cliente recién creado
+      } catch (error) {
+        console.error('Error al crear el cliente:', error);
+        alert('Error al crear el cliente');
+        return;
+      }
+    }
+
+    const cajaData = {
+      precioTotal,
+      productos: cart.map((item) => item.product.id), // Productos en el carrito
+      medioDePago,
+      cliente,
+      observaciones,
+      descripcion,
+      vendedor: vendedorId,
+    };
+
+    axios.post(`${import.meta.env.VITE_API_URL}/caja`, cajaData).then(() => {
+      alert('Venta registrada con éxito');
+    }).catch((error) => {
+      console.error('Error al registrar la venta:', error);
+    });
+  };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-800">
+    <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen bg-gray-800">
       <div className="backdrop-blur-md bg-white/30 p-6 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-center text-2xl font-semibold mb-4">Venta de Productos</h2>
-        
-        {/* Selector de categoría de productos */}
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value as 'accesorios' | 'celulares')}
-          className="w-full p-3 rounded-md bg-gray-800 mb-4"
-        >
-          <option value="accesorios">Accesorios</option>
-          <option value="celulares">Celulares</option>
-        </select>
 
-        {/* Selector de medio de pago */}
-        <select
-          value={medioDePago}
-          onChange={(e) => setMedioDePago(e.target.value as MedioDePago)}
-          className="w-full p-3 rounded-md bg-gray-800 mb-4"
-        >
-          {Object.values(MedioDePago).map(medio => (
-            <option key={medio} value={medio}>{medio}</option>
-          ))}
-        </select>
-
-        {/* Selector de tipo de cliente */}
-        <select
-          value={clientType}
-          onChange={(e) => setClientType(e.target.value as 'nuevo' | 'agendado')}
-          className="w-full p-3 rounded-md bg-gray-800 mb-4"
-        >
-          <option value="agendado">Cliente Agendado</option>
-          <option value="nuevo">Nuevo Cliente</option>
-        </select>
-
-        {/* Búsqueda de cliente existente */}
-        {clientType === 'agendado' && (
-          <div className="flex mb-4">
-            <input
-              type="text"
-              placeholder="Ingrese DNI del cliente"
-              value={clientDni}
-              onChange={(e) => setClientDni(e.target.value)}
-              className="w-full p-3 rounded-md bg-gray-800 mr-2"
-            />
-            <button 
-              onClick={handleSearchClient}
-              className="bg-blue-500 p-3 rounded-md text-white"
+        {/* Selección de cliente */}
+        <div>
+          <label>
+            Cliente:
+            <select
+              onChange={(e) => setIsNuevoCliente(e.target.value === 'Nuevo')}
+              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
             >
-              Buscar
-            </button>
-          </div>
-        )}
+              <option value="Registrado">Cliente ya Registrado</option>
+              <option value="Nuevo">Cliente Nuevo</option>
+            </select>
+          </label>
+        </div>
 
-        {/* Formulario para nuevo cliente */}
-        {clientType === 'nuevo' && (
-          <div className="space-y-4 mb-4">
+        {isNuevoCliente ? (
+          <div>
             <input
               type="text"
               placeholder="DNI"
-              value={clientDni}
-              onChange={(e) => setClientDni(e.target.value)}
-              className="w-full p-3 rounded-md bg-gray-800"
+              value={clienteData.dni}
+              onChange={(e) => setClienteData({ ...clienteData, dni: e.target.value })}
+              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
             />
             <input
               type="text"
               placeholder="Nombre"
-              value={newClientData.nombre}
-              onChange={(e) => setNewClientData({...newClientData, nombre: e.target.value})}
-              className="w-full p-3 rounded-md bg-gray-800"
+              value={clienteData.nombre}
+              onChange={(e) => setClienteData({ ...clienteData, nombre: e.target.value })}
+              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
             />
             <input
               type="text"
               placeholder="Apellido"
-              value={newClientData.apellido}
-              onChange={(e) => setNewClientData({...newClientData, apellido: e.target.value})}
-              className="w-full p-3 rounded-md bg-gray-800"
+              value={clienteData.apellido}
+              onChange={(e) => setClienteData({ ...clienteData, apellido: e.target.value })}
+              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+            />
+            <input
+              type="text"
+              placeholder="Dirección"
+              value={clienteData.direccion}
+              onChange={(e) => setClienteData({ ...clienteData, direccion: e.target.value })}
+              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
             />
             <input
               type="text"
               placeholder="Teléfono"
-              value={newClientData.telefono}
-              onChange={(e) => setNewClientData({...newClientData, telefono: e.target.value})}
-              className="w-full p-3 rounded-md bg-gray-800"
+              value={clienteData.nroTelefono}
+              onChange={(e) => setClienteData({ ...clienteData, nroTelefono: e.target.value })}
+              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
             />
-            <input
-              type="email"
-              placeholder="Email"
-              value={newClientData.email}
-              onChange={(e) => setNewClientData({...newClientData, email: e.target.value})}
-              className="w-full p-3 rounded-md bg-gray-800"
-            />
-            <button 
-              onClick={handleCreateClient}
-              className="w-full p-3 rounded-md bg-green-500 text-white"
+            {isNuevoCliente && (
+            <button
+                type="button"
+                onClick={async () => {
+                if (clienteData.dni && clienteData.nombre && clienteData.apellido) {
+                    try {
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/clientes`, clienteData);
+                    setCliente(response.data);  // Establecer cliente recién creado
+                    alert('Cliente creado con éxito');
+                    } catch (error) {
+                    console.error('Error al crear el cliente:', error);
+                    alert('Error al crear el cliente');
+                    }
+                } else {
+                    alert('Por favor complete todos los campos del cliente.');
+                }
+                }}
+                className="bg-green-500 w-full px-3 py-2 rounded-md text-white hover:bg-green-600 mb-4"
             >
-              Crear Cliente
+                Crear Cliente
+            </button>
+            )}
+          </div>
+        ) : (
+          <div>
+            <input
+              type="text"
+              placeholder="Buscar Cliente por DNI"
+              value={clienteDni}
+              onChange={(e) => setClienteDni(e.target.value)}
+              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+            />
+            <button
+              type="button"
+              onClick={handleClienteSearch}
+              className="w-full bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 mb-4"
+            >
+              Buscar Cliente
             </button>
           </div>
         )}
 
-        {/* Selector de comisión */}
+        {/* Selección de categoría y productos */}
         <select
-          value={comision}
-          onChange={(e) => setComision(e.target.value as Comision)}
-          className="w-full p-3 rounded-md bg-gray-800 mb-4"
+          value={category}
+          onChange={(e) => setCategory(e.target.value as Categoria)}
+          className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
         >
-          {Object.values(Comision).map(com => (
-            <option key={com} value={com}>{com}</option>
+          <option value={Categoria.ACCESORIOS}>Accesorios</option>
+          <option value={Categoria.CELULARES}>Celulares</option>
+        </select>
+
+        <select
+          value={selectedProduct}
+          onChange={(e) => setSelectedProduct(e.target.value)}
+          className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+        >
+          {productos.map((producto) => (
+            <option key={producto.id} value={producto.id}>
+              {producto.nombre} - ${producto.precio} (Stock: {producto.stock})
+            </option>
           ))}
         </select>
 
-        {/* Campos de observaciones y descripción */}
-        <input
-          type="text"
-          placeholder="Observaciones"
-          value={observaciones}
-          onChange={(e) => setObservaciones(e.target.value)}
-          className="w-full p-3 rounded-md bg-gray-800 mb-4"
-        />
-        <input
-          type="text"
-          placeholder="Descripción"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-3 rounded-md bg-gray-800 mb-4"
-        />
-
-        {/* Resto del código de selección de productos y carrito (se mantiene igual) */}
-        {/* ... (código anterior de selección de productos, carrito, etc.) ... */}
+        <div className="mb-4">
+          <label htmlFor="quantity" className="block text-white mb-1">
+            Cantidad:
+          </label>
+          <input
+            id="quantity"
+            type="number"
+            min="1"
+            max={productos.find((p) => p.id === selectedProduct)?.stock || 1}
+            value={selectedQuantity}
+            onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+            className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+          />
+        </div>
 
         <button
-          type="button"
-          onClick={handleSale}
-          className="w-full p-3 mt-4 rounded-md bg-green-500 text-white"
-          disabled={!clientId || cart.length === 0}
+          onClick={handleAddToCart}
+          className="bg-blue-500 w-full px-3 py-2 rounded-md text-white hover:bg-blue-600 mb-4"
         >
-          Realizar Venta
+          Agregar al carrito
+        </button>
+
+        {/* Resumen del carrito */}
+        <div className="bg-gray-900 p-4 rounded-md text-white">
+          <h3 className="text-lg font-semibold mb-2">Carrito</h3>
+          {cart.length === 0 ? (
+            <p className="text-sm">No hay productos en el carrito.</p>
+          ) : (
+            <ul className="space-y-2">
+              {cart.map((item) => (
+                <li key={item.product.id} className="flex justify-between items-center">
+                  <div>
+                    <span>{item.product.nombre} (x{item.quantity})</span>
+                    <p className="text-sm">${item.product.precio * item.quantity}</p>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveFromCart(item.product.id)}
+                    className="bg-red-500 px-3 py-1 rounded-md text-white hover:bg-red-600"
+                  >
+                    Eliminar
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="mt-2 font-semibold">Total: ${calculateTotalPrice()}</p>
+        </div>
+
+        {/* Observaciones y descripción */}
+        <div>
+          <label>
+            Observaciones:
+            <input
+              type="text"
+              value={observaciones}
+              onChange={(e) => setObservaciones(e.target.value)}
+              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Descripción:
+            <input
+              type="text"
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+            />
+          </label>
+        </div>
+
+        <button type="submit" className="bg-green-500 w-full px-3 py-2 rounded-md text-white hover:bg-green-600">
+          Registrar Venta
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 
