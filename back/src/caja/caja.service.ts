@@ -30,52 +30,81 @@ export class CajaService {
   }
   
 
-    async updateCaja(id: string, data: UpdateCajaDto): Promise<void> {
-        let vendedor = null;
-      
-        if (data.vendedor) {
-          vendedor = await this.usuarioRepository.findOne({ where: { id: data.vendedor } });
-          if (!vendedor) {
+  async updateCaja(id: string, data: UpdateCajaDto): Promise<void> {
+    let vendedor = null;
+
+    // Si se proporciona un vendedor, buscarlo
+    if (data.vendedor) {
+        vendedor = await this.usuarioRepository.findOne({ where: { id: data.vendedor } });
+        if (!vendedor) {
             throw new Error('El vendedor especificado no existe.');
-          }
         }
-      
-        let productos = null;
-        if (data.productos && data.productos.length > 0) {
-          productos = await this.productoRepository.find({
+    }
+
+    let productos = null;
+    // Si se proporcionan productos, buscar sus objetos completos
+    if (data.productos && data.productos.length > 0) {
+        productos = await this.productoRepository.find({
             where: data.productos.map((id) => ({ id })),
-          });
-      
-          if (productos.length !== data.productos.length) {
-            throw new Error('Algunos productos especificados no existen.');
-          }
-        }
-      
-        await this.cajaRepository.update(id, {
-          ...data,
-          vendedor, 
-          productos, 
         });
-      }
-      
-      
+
+        if (productos.length !== data.productos.length) {
+            throw new Error('Algunos productos especificados no existen.');
+        }
+    }
+
+    let cliente = null;
+    // Si se proporciona un cliente, buscar el objeto completo
+    if (data.cliente) {
+        cliente = await this.usuarioRepository.findOne({ where: { id: data.cliente } });
+        if (!cliente) {
+            throw new Error('El cliente especificado no existe.');
+        }
+    }
+
+    // Realizar la actualización de la caja
+    await this.cajaRepository.update(id, {
+        ...data,
+        vendedor,       // Asignar el objeto completo de vendedor
+        productos,      // Asignar el array de productos completos
+        cliente,        // Asignar el objeto completo de cliente
+    });
+}
+
 
       async createCaja(data: CreateCajaDto): Promise<Caja> {
+        // Buscar el vendedor
         const vendedor = await this.usuarioRepository.findOne({ where: { id: data.vendedor } });
         if (!vendedor) {
-          throw new Error('El vendedor especificado no existe.');
+            throw new Error('El vendedor especificado no existe.');
         }
     
-        const productos = JSON.stringify(data.productos);
+        // Buscar el cliente por su ID
+        const cliente = await this.usuarioRepository.findOne({ where: { id: data.cliente } }); // Ajustado a cliente
+        if (!cliente) {
+            throw new Error('El cliente especificado no existe.');
+        }
     
+        // Buscar productos
+        const productos = await this.productoRepository.findByIds(data.productos);
+        if (productos.length !== data.productos.length) {
+            throw new Error('Algunos productos especificados no existen.');
+        }
+    
+        // Crear la nueva caja con los datos completos
         const nuevaCaja = this.cajaRepository.create({
-          ...data,
-          vendedor,
-          productos: data.productos,
+            ...data,
+            vendedor,              // Asignar el objeto completo de vendedor
+            productos,             // Asignar el array de productos completos
+            cliente,               // Asignar el objeto completo de cliente
+            medioDePago: data.medioDePago,  // Asignar el valor de medioDePago
         });
     
+        // Guardar la caja en la base de datos
         return this.cajaRepository.save(nuevaCaja);
-      }
+    }
+    
+    
     async deleteCaja(id: string) {
         return this.cajaRepository.delete(id);
     }

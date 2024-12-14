@@ -3,14 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from 'src/Entity/producto.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
+import { Cellphone } from 'src/Entity/cellphone.entity';
 
 @Injectable()
 export class ProductoService {
-constructor(
-    @InjectRepository(Producto) private productoRepository: Repository<Producto>,
-) {}
+    constructor(
+        @InjectRepository(Producto) private productoRepository: Repository<Producto>,
+        @InjectRepository(Cellphone) private celularRepository: Repository<Cellphone>
+    ) {}
     async getAllProducts(){
         return await this.productoRepository.find()
+    }
+    async getAllCelulares() {
+        return await this.celularRepository.find()
     }
     
     async getProductsById(id){

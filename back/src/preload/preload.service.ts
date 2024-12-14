@@ -1,6 +1,6 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import preloadData from './data.json';
 import { Usuario } from 'src/Entity/usuario.entity';
 import { Caja } from 'src/Entity/caja.entity';
@@ -9,6 +9,10 @@ import { Service } from 'src/Entity/service.entity';
 import { Factura } from 'src/Entity/factura.entity';
 import { Role } from 'src/enum/roles.enum';
 import * as bcrypt from 'bcrypt';
+import { Cellphone } from 'src/Entity/cellphone.entity'; // Importar la entidad Cellphone
+import { Cliente } from 'src/Entity/cliente.entity';
+import { MedioDePago } from 'src/enum/medioDePago.enum';
+import { Comision } from 'src/enum/comision.enum';
 
 @Injectable()
 export class PreloadService implements OnApplicationBootstrap {
@@ -18,14 +22,16 @@ export class PreloadService implements OnApplicationBootstrap {
     @InjectRepository(Producto) private readonly productoRepository: Repository<Producto>, // Añadir repositorio de Producto
     @InjectRepository(Service) private readonly serviceRepository: Repository<Service>,
     @InjectRepository(Factura) private readonly facturaRepository: Repository<Factura>,
+    @InjectRepository(Cellphone) private readonly cellphoneRepository: Repository<Cellphone>, // Añadir repositorio de Cellphone
+    @InjectRepository(Cliente) private readonly clienteRepository: Repository<Cliente> // Añadir repositorio de Cellphone
   ) {}
 
   async onApplicationBootstrap() {
     try {
       await this.preloadUsuarios();
-      await this.preloadServicios();
       await this.preloadCajas();
       await this.preloadProductos();
+      await this.preloadCellphones(); // Llamar a la función de precarga de celulares
       await this.preloadFacturas();
       console.log('Preload completado exitosamente.');
     } catch (error) {
@@ -41,8 +47,7 @@ export class PreloadService implements OnApplicationBootstrap {
         if (!exists) {
           const role = Role[usuario.role as keyof typeof Role];
   
-          // Encripta la contraseña antes de crear el usuario
-          const salt = await bcrypt.genSalt(10); // Genera un salt (puedes ajustar el factor)
+          const salt = await bcrypt.genSalt(10); // Genera un salt
           const hashedPassword = await bcrypt.hash(usuario.password, salt);
   
           const nuevoUsuario = this.usuarioRepository.create({
@@ -83,39 +88,61 @@ export class PreloadService implements OnApplicationBootstrap {
     }
   }
 
-  private async preloadServicios() {
-    console.log('Cargando servicios...');
-    for (const service of preloadData.services) {
-      try {
-        const usuario = await this.usuarioRepository.findOne({ where: { id: service.usuarioId } });
-        if (usuario) {
-          await this.serviceRepository.save(this.serviceRepository.create({ ...service, usuario }));
-          console.log(`Servicio para el usuario ${usuario.nombre} ${usuario.apellido} guardado.`);
-        } else {
-          console.log(`Usuario con ID ${service.usuarioId} no encontrado, omitiendo servicio.`);
-        }
-      } catch (error) {
-        console.error(`Error al cargar el servicio para usuario ID ${service.usuarioId}:`, error);
-      }
-    }
-  }
-
   private async preloadCajas() {
     console.log('Cargando cajas...');
     for (const caja of preloadData.cajas) {
       try {
-        const vendedor = await this.usuarioRepository.findOne({ where: { id: caja.vendedorId } });
-        if (vendedor) {
-          await this.cajaRepository.save(this.cajaRepository.create({ ...caja, vendedor }));
+        // Obtener el vendedor, que es una relación
+        const vendedor = await this.usuarioRepository.findOne({ where: { id: caja.vendedor } });
+        const cliente = await this.clienteRepository.findOne({ where: { id: caja.cliente } });
+  
+        // Obtener los productos, que es una relación (asumimos que los productos están en un arreglo de IDs)
+        const productos = await this.productoRepository.find({
+          where: {
+            id: In(caja.productos), // Usando In para buscar los productos por sus IDs
+          },
+        });
+  
+        // Si tanto el vendedor como los productos existen
+        if (vendedor && productos.length > 0) {
+          // Verificar que 'medioDePago' esté correctamente asignado como enum
+          let medioDePago = null;
+          if (caja.medioDePago) {
+            medioDePago = caja.medioDePago as MedioDePago; // Asegurándote de que sea del tipo enum esperado
+          }
+          let comision = null;
+          if (caja.comision) {
+            medioDePago = caja.comision as Comision; // Asegurándote de que sea del tipo enum esperado
+          }
+  
+          // Crear la nueva caja usando los datos cargados
+          const nuevaCaja = this.cajaRepository.create({
+            ...caja,              // Incluyendo las propiedades de 'caja' (sin los IDs como strings)
+            productos,            // Asignar el array de productos completos
+            cliente,              // Asignar el objeto cliente completo
+            medioDePago,          // Asignar el enum medioDePago
+            comision,
+            vendedor,             // Asignar el objeto completo de vendedor
+          });
+  
+          // Guardar la nueva caja
+          await this.cajaRepository.save(nuevaCaja);
           console.log(`Caja para el vendedor ${vendedor.nombre} ${vendedor.apellido} guardada.`);
         } else {
-          console.log(`Vendedor con ID ${caja.vendedorId} no encontrado, omitiendo caja.`);
+          if (!vendedor) {
+            console.log(`Vendedor con ID ${caja.vendedor} no encontrado, omitiendo caja.`);
+          }
+          if (productos.length === 0) {
+            console.log(`Productos no encontrados para la caja con ID , omitiendo.`);
+          }
         }
       } catch (error) {
-        console.error(`Error al cargar la caja para vendedor ID ${caja.vendedorId}:`, error);
+        console.error(`Error al cargar la caja para vendedor ID ${caja.vendedor}:`, error);
       }
     }
   }
+  
+  
 
   private async preloadFacturas() {
     console.log('Cargando facturas...');
@@ -130,6 +157,28 @@ export class PreloadService implements OnApplicationBootstrap {
         }
       } catch (error) {
         console.error(`Error al cargar la factura para usuario ID ${factura.usuarioId}:`, error);
+      }
+    }
+  }
+
+  // Nueva función de precarga de celulares
+  private async preloadCellphones() {
+    console.log('Cargando celulares...');
+    for (const cellphone of preloadData.cellphones) {
+      try {
+        const exists = await this.cellphoneRepository.findOne({ where: { nombre: cellphone.nombre } });
+        if (!exists) {
+          const nuevoCellphone = this.cellphoneRepository.create({
+            ...cellphone,
+          });
+
+          await this.cellphoneRepository.save(nuevoCellphone);
+          console.log(`Celular ${cellphone.nombre} guardado con éxito.`);
+        } else {
+          console.log(`Celular ${cellphone.nombre} ya existe, omitiendo.`);
+        }
+      } catch (error) {
+        console.error(`Error al cargar el celular ${cellphone.nombre}:`, error);
       }
     }
   }

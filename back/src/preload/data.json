@@ -43,24 +43,24 @@
     {
       "precioTotal": 3000,
       "productos": ["1440f790-7224-4048-b559-f3aee102a227", "f77cb2cb-56ee-4faf-9670-448749c804e5"],
-      "medioDePago": "EFECTIVO",
+      "medioDePago": "Efectivo",
       "cliente": "Cliente A",
       "nroTelefono": 1234567890,
       "observaciones": "Sin observaciones",
       "description": "Venta mayorista",
       "comision": "ALTA",
-      "vendedorId": "569df967-4bfa-4b69-8181-d131f425cf7b"
+      "vendedor": "569df967-4bfa-4b69-8181-d131f425cf7b"
     },
     {
       "precioTotal": 4500,
       "productos": ["7031c794-8f3d-4c35-8e70-ac373a5e2213", "6f0ad7e2-60bd-4913-bfbf-613175effd30"],
-      "medioDePago": "TARJETA",
+      "medioDePago": "Laura",
       "cliente": "Cliente B",
       "nroTelefono": 1134572470,
       "observaciones": "Revisar stock",
       "description": "Venta minorista",
       "comision": "MEDIA",
-      "vendedorId": "1c984b2f-b3b1-43e0-b538-c27d589df292"
+      "vendedor": "1c984b2f-b3b1-43e0-b538-c27d589df292"
     }
   ],
   "facturas": [
@@ -86,7 +86,7 @@
     },
     {
       "id": "f77cb2cb-56ee-4faf-9670-448749c804e5",
-      "nombre": "Producto A",
+      "nombre": "Producto B",
       "precio": 100,
       "stock": 50,
       "imagen": "imagen-a.jpg",
@@ -94,7 +94,7 @@
     },
     {
       "id": "6f0ad7e2-60bd-4913-bfbf-613175effd30",
-      "nombre": "Producto A",
+      "nombre": "Producto C",
       "precio": 100,
       "stock": 50,
       "imagen": "imagen-a.jpg",
@@ -102,11 +102,32 @@
     },
     {
       "id": "7031c794-8f3d-4c35-8e70-ac373a5e2213",
-      "nombre": "Producto B",
+      "nombre": "Producto D",
       "precio": 200,
       "stock": 30,
       "imagen": "imagen-b.jpg",
       "categoria": "Ropa"
+    }
+  ],
+  "cellphones":[
+    {
+      "id": "12d5f498-ecc2-4c52-bb6b-7d92b8de6cd9",
+      "nombre": "Celular X",
+      "precio": 3500,
+      "stock": 10,
+      "imagen": "celular-x.jpg",
+      "categoria": "Electrónica",
+      "estado":"Nuevo"
+    },
+    {
+      "id": "dc632abf-f8e2-4f8f-9d23-389557ce2d85",
+      "nombre": "Celular Y",
+      "precio": 4000,
+      "stock": 15,
+      "imagen": "celular-y.jpg",
+      "categoria": "Electrónica",
+      "estado":"Usado",
+      "descripcionEstado":"Pantalla estallada"
     }
   ]
 }

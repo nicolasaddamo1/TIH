@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 // Interfaces
 interface Product {
@@ -23,8 +23,9 @@ const SalesForm: React.FC = () => {
   const [_total, setTotal] = useState<number>(0);
   const [userId, setUserId] = useState<string | null>(null);
   const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
+  const [category, setCategory] = useState<'accesorios' | 'celulares'>('accesorios'); // Estado para la categoría seleccionada
 
-  
+  // Decodificar el JWT y obtener el userId
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -36,11 +37,16 @@ const SalesForm: React.FC = () => {
       }
     }
   }, []);
-  console.log(import.meta.env.VITE_API_URL)
+
+  // Obtener productos según la categoría seleccionada
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/producto`);
+        const response = await fetch(
+          category === 'accesorios'
+            ? `${import.meta.env.VITE_API_URL}/producto`
+            : `${import.meta.env.VITE_API_URL}/producto/celulares`
+        );
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -48,8 +54,13 @@ const SalesForm: React.FC = () => {
       }
     };
     fetchProducts();
-  }, []);
-  
+  }, [category]); // Se ejecuta cada vez que cambie la categoría seleccionada
+
+  // Función para manejar el cambio de categoría
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategory(e.target.value as 'accesorios' | 'celulares');
+  };
+
   const handleProductSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const productId = e.target.value;
     const product = products.find((p) => p.id === productId) || null;
@@ -97,7 +108,7 @@ const SalesForm: React.FC = () => {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:3000/ventas`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/ventas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -124,6 +135,17 @@ const SalesForm: React.FC = () => {
       <div className="backdrop-blur-md bg-white/30 p-6 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-center text-2xl font-semibold mb-4">Venta de Productos</h2>
         {userId && <p className="text-sm text-gray-400 text-center">ID Usuario: {userId}</p>}
+
+        {/* Selector de categoría */}
+        <select
+          value={category}
+          onChange={handleCategoryChange}
+          className="w-full p-3 rounded-md bg-gray-800 mb-4"
+        >
+          <option value="accesorios">Accesorios</option>
+          <option value="celulares">Celulares</option>
+        </select>
+
         <form className="space-y-4">
           <select onChange={handleProductSelect} className="w-full p-3 rounded-md bg-gray-800">
             <option value="">Seleccione un producto</option>
@@ -149,6 +171,7 @@ const SalesForm: React.FC = () => {
             Agregar al Carrito
           </button>
         </form>
+
         <div className="mt-6">
           <h3 className="text-xl text-white mb-2">Carrito</h3>
           {cart.length === 0 ? (
@@ -161,7 +184,7 @@ const SalesForm: React.FC = () => {
                   className="bg-gray-700 p-2 rounded-md text-white flex justify-between items-center"
                 >
                   <span>
-                    {item.product.nombre}     Cantidad: {item.quantity}      Precio ${item.product.precio * item.quantity}
+                    {item.product.nombre} - Cantidad: {item.quantity} - Precio ${item.product.precio * item.quantity}
                   </span>
                   <button
                     onClick={() => handleRemoveFromCart(item.product.id)}
@@ -177,6 +200,7 @@ const SalesForm: React.FC = () => {
             <strong>Total: ${calculateTotalPrice()}</strong>
           </div>
         </div>
+
         <button
           type="button"
           onClick={handleSale}

@@ -10,6 +10,5 @@ cantidad: number
 
 @Column({type:"int"})
 precio: number
-//relaciones id factura
-//id productos
+
 }

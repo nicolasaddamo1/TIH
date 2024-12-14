@@ -12,6 +12,10 @@ export class ProductoController {
     async getAllProducts(){
         return this.productoService.getAllProducts()
     }
+    @Get('celulares')
+    async getAllCelulares(){
+        return this.productoService.getAllCelulares()
+    }
     
     @Get(':id')
     async getProductsById(
