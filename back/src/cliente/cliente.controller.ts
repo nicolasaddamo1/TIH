@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { ClienteService } from './cliente.service'
+import { CreateClienteDto } from './dto/Cliente.dto'
 
 @Controller('clientes')
 export class ClienteController{
@@ -7,6 +8,12 @@ export class ClienteController{
         private clientesService: ClienteService
     ){}
 
+    @Post()
+    async createCliente(
+        @Body() data:CreateClienteDto
+    ){
+        return this.clientesService.createCliente(data)
+    }
     @Get()
     async getAllClients(){
         return this.clientesService.getAllClients()
@@ -33,5 +40,6 @@ export class ClienteController{
     ){
         return this.clientesService.deleteClient(id)
     }
+
 
 }

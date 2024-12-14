@@ -11,12 +11,11 @@ import { ReparacionModule } from './reparacion/reparacion.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { CajaModule } from './caja/caja.module';
 import { Usuario } from './Entity/usuario.entity';
-import { Producto } from './Entity/producto.entity';
+import { Producto, Cellphone } from './Entity/producto.entity';
 import { Caja } from './Entity/caja.entity';
 import { Factura } from './Entity/factura.entity';
 import { Service } from './Entity/service.entity';
 import { PreloadService } from './preload/preload.service';
-import { Cellphone } from './Entity/cellphone.entity';
 import { Cliente } from './Entity/cliente.entity';
 import { ClienteModule } from './cliente/cliente.module';
 

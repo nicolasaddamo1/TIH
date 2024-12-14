@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Cliente } from "src/Entity/cliente.entity";
 import { Repository } from "typeorm";
+import { CreateClienteDto } from "./dto/Cliente.dto";
 
 
 
@@ -11,6 +12,10 @@ export class ClienteService{
         @InjectRepository(Cliente) private clienteRepository: Repository<Cliente>
     )
     {}
+    async createCliente(data:CreateClienteDto) {
+        const newClient = this.clienteRepository.create(data)
+        return this.clienteRepository.save(newClient)
+    }
     
     async getAllClients(){
         return this.clienteRepository.find()

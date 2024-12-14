@@ -15,7 +15,7 @@ export class Caja {
 
     @ManyToMany(() => Producto)  // Relaciona con los productos
     @JoinTable()  // Relación de muchos a muchos entre cajas y productos
-    productos: Producto[];
+    productos?: Producto[];
 
     @Column({ type: 'enum', enum: MedioDePago, default:MedioDePago.MERCADOPAGO })
     medioDePago: MedioDePago;

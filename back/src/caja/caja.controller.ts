@@ -29,6 +29,7 @@ export class CajaController {
     async createCaja(
         @Body() data:CreateCajaDto
     ) {
+        console.log("esto es lo que se recibe: ", data)
         return this.cajaService.createCaja(data);
     }
 

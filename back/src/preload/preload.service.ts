@@ -4,12 +4,11 @@ import { In, Repository } from 'typeorm';
 import preloadData from './data.json';
 import { Usuario } from 'src/Entity/usuario.entity';
 import { Caja } from 'src/Entity/caja.entity';
-import { Producto } from 'src/Entity/producto.entity'; 
+import { Producto, Cellphone } from 'src/Entity/producto.entity'; 
 import { Service } from 'src/Entity/service.entity';
 import { Factura } from 'src/Entity/factura.entity';
 import { Role } from 'src/enum/roles.enum';
 import * as bcrypt from 'bcrypt';
-import { Cellphone } from 'src/Entity/cellphone.entity'; // Importar la entidad Cellphone
 import { Cliente } from 'src/Entity/cliente.entity';
 import { MedioDePago } from 'src/enum/medioDePago.enum';
 import { Comision } from 'src/enum/comision.enum';
@@ -72,12 +71,25 @@ export class PreloadService implements OnApplicationBootstrap {
     console.log('Cargando productos...');
     for (const producto of preloadData.productos) {
       try {
+        // Verificar si el producto ya existe por nombre
         const exists = await this.productoRepository.findOne({ where: { nombre: producto.nombre } });
+  
         if (!exists) {
-          const nuevoProducto = this.productoRepository.create({
-            ...producto,
-          });
-
+          let nuevoProducto;
+          
+          if (producto.tipo === 'Cellphone') {
+            // Si el producto es un celular, lo creamos como una instancia de Cellphone
+            const nuevoCellphone = this.cellphoneRepository.create({
+              ...producto,
+            });
+            nuevoProducto = nuevoCellphone;  // Aquí asignamos correctamente el celular
+          } else {
+            // De lo contrario, lo tratamos como un Producto común
+            nuevoProducto = this.productoRepository.create({
+              ...producto,
+            });
+          }
+  
           await this.productoRepository.save(nuevoProducto);
           console.log(`Producto ${producto.nombre} guardado con éxito.`);
         } else {
@@ -88,7 +100,7 @@ export class PreloadService implements OnApplicationBootstrap {
       }
     }
   }
-
+  
   private async preloadCajas() {
     console.log('Cargando cajas...');
     for (const caja of preloadData.cajas) {
@@ -172,7 +184,7 @@ export class PreloadService implements OnApplicationBootstrap {
           const nuevoCellphone = this.cellphoneRepository.create({
             ...cellphone,
           });
-
+  
           await this.cellphoneRepository.save(nuevoCellphone);
           console.log(`Celular ${cellphone.nombre} guardado con éxito.`);
         } else {

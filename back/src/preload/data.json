@@ -82,7 +82,8 @@
       "precio": 100,
       "stock": 50,
       "imagen": "imagen-a.jpg",
-      "categoria": "Electrónica"
+      "categoria": "Electrónica",
+      "tipo":"Producto"
     },
     {
       "id": "f77cb2cb-56ee-4faf-9670-448749c804e5",
@@ -90,7 +91,8 @@
       "precio": 100,
       "stock": 50,
       "imagen": "imagen-a.jpg",
-      "categoria": "Electrónica"
+      "categoria": "Electrónica",
+      "tipo":"Producto"
     },
     {
       "id": "6f0ad7e2-60bd-4913-bfbf-613175effd30",
@@ -117,7 +119,8 @@
       "stock": 10,
       "imagen": "celular-x.jpg",
       "categoria": "Electrónica",
-      "estado":"Nuevo"
+      "estado":"Nuevo",
+      "tipo":"Cellphone"
     },
     {
       "id": "dc632abf-f8e2-4f8f-9d23-389557ce2d85",
@@ -127,7 +130,8 @@
       "imagen": "celular-y.jpg",
       "categoria": "Electrónica",
       "estado":"Usado",
-      "descripcionEstado":"Pantalla estallada"
+      "descripcionEstado":"Pantalla estallada",
+      "tipo":"Cellphone"
     }
   ],
   "clientes":[{
