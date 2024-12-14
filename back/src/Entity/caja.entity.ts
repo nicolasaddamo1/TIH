@@ -23,9 +23,6 @@ export class Caja {
     @ManyToOne(() => Cliente, { eager: true })  // Relaciona con la entidad Cliente
     cliente: Cliente;
 
-    @Column({ type: 'int' })
-    nroTelefono: number;
-
     @Column({ type: 'date', default: () => "CURRENT_DATE" })
     fecha: Date;
 

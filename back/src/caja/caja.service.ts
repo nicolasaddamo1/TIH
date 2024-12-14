@@ -100,7 +100,7 @@ export class CajaService {
             medioDePago: data.medioDePago,  // Asignar el valor de medioDePago
         });
     
-        // Guardar la caja en la base de datos
+        // Guardar la caja en la base de datoss
         return this.cajaRepository.save(nuevaCaja);
     }
     
