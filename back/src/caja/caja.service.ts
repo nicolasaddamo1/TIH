@@ -6,6 +6,7 @@ import { CreateCajaDto } from './dto/createCaja.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from 'src/Entity/usuario.entity';
 import { Producto } from 'src/Entity/producto.entity';
+import { Cliente } from 'src/Entity/cliente.entity';
 
 @Injectable()
 export class CajaService {
@@ -14,6 +15,7 @@ export class CajaService {
         @InjectRepository(Caja) private cajaRepository: Repository<Caja>, 
         @InjectRepository(Usuario) private usuarioRepository: Repository<Usuario>,
         @InjectRepository(Producto) private productoRepository: Repository<Producto>,
+        @InjectRepository(Cliente) private clientenRepository: Repository<Cliente>
     ) {}
 
     async getAllCajas(limit: number) {
@@ -56,7 +58,7 @@ export class CajaService {
     let cliente = null;
     // Si se proporciona un cliente, buscar el objeto completo
     if (data.cliente) {
-        cliente = await this.usuarioRepository.findOne({ where: { id: data.cliente } });
+        cliente = await this.clientenRepository.findOne({ where: { id: data.cliente } });
         if (!cliente) {
             throw new Error('El cliente especificado no existe.');
         }
@@ -79,8 +81,9 @@ export class CajaService {
             throw new Error('El vendedor especificado no existe.');
         }
     
-        // Buscar el cliente por su ID
-        const cliente = await this.usuarioRepository.findOne({ where: { id: data.cliente } }); // Ajustado a cliente
+        console.log("data", data.cliente)
+        console.log("data", typeof(data.cliente))
+        const cliente = await this.clientenRepository.findOne({ where: { id: data.cliente } }); // Ajustado a cliente
         if (!cliente) {
             throw new Error('El cliente especificado no existe.');
         }
@@ -99,7 +102,7 @@ export class CajaService {
             cliente,               // Asignar el objeto completo de cliente
             medioDePago: data.medioDePago,  // Asignar el valor de medioDePago
         });
-    
+        console.log(nuevaCaja)
         // Guardar la caja en la base de datoss
         return this.cajaRepository.save(nuevaCaja);
     }
