@@ -13,14 +13,18 @@ export class Caja {
     @Column({ type: 'int' })
     precioTotal: number;
 
-    @ManyToMany(() => Producto)  // Relaciona con los productos
-    @JoinTable()  // Relación de muchos a muchos entre cajas y productos
+    @ManyToMany(() => Producto, { eager: true })  // Relaciona con los productos
+    @JoinTable({
+        name: "caja_productos_producto",
+        joinColumn: { name: "cajaId", referencedColumnName: "id" },
+        inverseJoinColumn: { name: "productoId", referencedColumnName: "id" }
+    })  
     productos?: Producto[];
 
     @Column({ type: 'enum', enum: MedioDePago, default:MedioDePago.MERCADOPAGO })
     medioDePago: MedioDePago;
 
-    @ManyToOne(() => Cliente, { eager: true })  // Relaciona con la entidad Cliente
+    @ManyToOne(() => Cliente, { eager: true }) 
     cliente: Cliente;
 
     @Column({ type: 'date', default: () => "CURRENT_DATE" })
