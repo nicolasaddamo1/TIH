@@ -72,17 +72,13 @@ export class CajaService {
         cliente,        // Asignar el objeto completo de cliente
     });
 }
-
-
       async createCaja(data: CreateCajaDto): Promise<Caja> {
         // Buscar el vendedor
         const vendedor = await this.usuarioRepository.findOne({ where: { id: data.vendedor } });
         if (!vendedor) {
             throw new Error('El vendedor especificado no existe.');
         }
-    
-        console.log("data", data.cliente)
-        console.log("data", typeof(data.cliente))
+
         const cliente = await this.clientenRepository.findOne({ where: { id: data.cliente } }); // Ajustado a cliente
         if (!cliente) {
             throw new Error('El cliente especificado no existe.');
@@ -90,6 +86,7 @@ export class CajaService {
     
         // Buscar productos
         const productos = await this.productoRepository.findByIds(data.productos);
+        console.log("productos:", productos)
         if (productos.length !== data.productos.length) {
             throw new Error('Algunos productos especificados no existen.');
         }
