@@ -38,10 +38,8 @@ const SalesForm: React.FC = () => {
   const [precioTotal, setPrecioTotal] = useState(0);
   const [medioDePago, setMedioDePago] = useState('MercadoPago');
   const [observaciones, setObservaciones] = useState('');
-  const [descripcion, setDescripcion] = useState('');
   const [vendedorId, setVendedorId] = useState('');
 
-  // Obtener productos según la categoría seleccionada
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -52,7 +50,7 @@ const SalesForm: React.FC = () => {
         );
         const data = await response.json();
         setProductos(data);
-        setSelectedProduct(data.length > 0 ? data[0].id : ''); // Seleccionar el primer producto si existen
+        setSelectedProduct(data.length > 0 ? data[0].id : '');
       } catch (error) {
         console.error('Error al obtener productos:', error);
       }
@@ -60,14 +58,13 @@ const SalesForm: React.FC = () => {
     fetchProducts();
   }, [category]);
 
-  // Obtener ID del vendedor desde el token
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
       try {
         const decoded = jwtDecode<JwtPayload>(token);
         if (decoded.sub && typeof decoded.sub === 'string') {
-          setVendedorId(decoded.sub); // Asegúrate que este es un UUID válido
+          setVendedorId(decoded.sub);
         } else {
           console.error('El token no contiene un sub válido');
         }
@@ -77,7 +74,6 @@ const SalesForm: React.FC = () => {
     }
   }, []);
 
-  // Manejar la adición al carrito
   const handleAddToCart = () => {
     const product = productos.find((p) => p.id === selectedProduct);
     if (!product) return;
@@ -96,25 +92,22 @@ const SalesForm: React.FC = () => {
     }
   };
 
-  // Manejar eliminación de productos del carrito
   const handleRemoveFromCart = (productId: string) => {
     setCart(cart.filter((item) => item.product.id !== productId));
   };
 
-  // Calcular el precio total del carrito
   const calculateTotalPrice = () => {
 
     const precioTotal = cart.reduce((sum, item) => sum + item.product.precio * item.quantity, 0);
     return precioTotal
   };
-  // Manejar búsqueda de cliente
   const handleClienteSearch = () => {
     if (clienteDni) {
       axios.get(`${import.meta.env.VITE_API_URL}/clientes/${clienteDni}`)
         .then((response) => {
           if (response.data) {
             setCliente(response.data.id);
-            setClienteData(response.data); // Opcional: si quieres mostrar los datos
+            setClienteData(response.data);
             alert('Cliente encontrado');
           }
         })
@@ -125,15 +118,13 @@ const SalesForm: React.FC = () => {
     }
   };
 
-  // Manejar el envío del formulario (Registrar Venta)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Si el cliente es nuevo, enviar los datos para crear el cliente
     if (isNuevoCliente && clienteData.dni && clienteData.nombre && clienteData.apellido) {
       try {
         const newCliente = await axios.post('/clientes', clienteData);
-        setCliente(newCliente.data);  // Establecer cliente recién creado
+        setCliente(newCliente.data);
       } catch (error) {
         console.error('Error al crear el cliente:', error);
         alert('Error al crear el cliente');
@@ -142,12 +133,11 @@ const SalesForm: React.FC = () => {
     }
 
     const cajaData = {
-      productos: cart.map((item) => item.product.id), // Productos en el carrito
+      productos: cart.map((item) => item.product.id), 
       precioTotal: calculateTotalPrice(),
       medioDePago,
       cliente,
       observaciones,
-      descripcion,
       vendedor: vendedorId,
     };
 
@@ -343,18 +333,6 @@ const SalesForm: React.FC = () => {
             />
           </label>
         </div>
-        <div>
-          <label>
-            Descripción:
-            <input
-              type="text"
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
-            />
-          </label>
-        </div>
-
         <button type="submit" className="bg-green-500 w-full px-3 py-2 rounded-md text-white hover:bg-green-600">
           Registrar Venta
         </button>
