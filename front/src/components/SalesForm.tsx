@@ -120,7 +120,7 @@ const SalesForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (isNuevoCliente && clienteData.dni && clienteData.nombre && clienteData.apellido) {
       try {
         const newCliente = await axios.post('/clientes', clienteData);
@@ -131,24 +131,29 @@ const SalesForm: React.FC = () => {
         return;
       }
     }
-
+  
+    // Determinar la comisión basado en la categoría seleccionada
+    const tipoComision = category === Categoria.ACCESORIOS ? 'Venta' : 'Celular';
+  
     const cajaData = {
       productos: cart.map((item) => item.product.id),
-      comision: cart.map((item) => item.product.categoria === Categoria.ACCESORIOS ? 'Venta' : 'Celular'),
+      comision: tipoComision, // Comision basada en la categoría seleccionada
       precioTotal: calculateTotalPrice(),
       medioDePago,
       cliente,
       observaciones,
       vendedor: vendedorId,
     };
-
-    axios.post(`${import.meta.env.VITE_API_URL}/caja`, cajaData).then(() => {
+  
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/caja`, cajaData);
       alert('Venta registrada con éxito');
-    }).catch((error) => {
+    } catch (error) {
       console.error('Error al registrar la venta:', error);
-    });
+      alert('Hubo un problema al registrar la venta');
+    }
   };
-
+  
   return (
     <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen bg-gray-800">
       <div className="backdrop-blur-md bg-white/30 p-6 rounded-lg shadow-lg max-w-md w-full">
