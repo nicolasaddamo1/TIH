@@ -133,7 +133,8 @@ const SalesForm: React.FC = () => {
     }
 
     const cajaData = {
-      productos: cart.map((item) => item.product.id), 
+      productos: cart.map((item) => item.product.id),
+      comision: cart.map((item) => item.product.categoria === Categoria.ACCESORIOS ? 'Venta' : 'Celular'),
       precioTotal: calculateTotalPrice(),
       medioDePago,
       cliente,
