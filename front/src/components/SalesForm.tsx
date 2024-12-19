@@ -103,16 +103,16 @@ const SalesForm: React.FC = () => {
 
   // Calcular el precio total del carrito
   const calculateTotalPrice = () => {
-    return cart.reduce((sum, item) => sum + item.product.precio * item.quantity, 0);
+
+    const precioTotal = cart.reduce((sum, item) => sum + item.product.precio * item.quantity, 0);
+    return precioTotal
   };
-  console.log("Cliente state: ", cliente)
   // Manejar búsqueda de cliente
   const handleClienteSearch = () => {
     if (clienteDni) {
       axios.get(`${import.meta.env.VITE_API_URL}/clientes/${clienteDni}`)
         .then((response) => {
           if (response.data) {
-            console.log("Cliente encontrado:", response.data);
             setCliente(response.data.id);
             setClienteData(response.data); // Opcional: si quieres mostrar los datos
             alert('Cliente encontrado');
@@ -142,8 +142,8 @@ const SalesForm: React.FC = () => {
     }
 
     const cajaData = {
-      precioTotal,
       productos: cart.map((item) => item.product.id), // Productos en el carrito
+      precioTotal: calculateTotalPrice(),
       medioDePago,
       cliente,
       observaciones,
