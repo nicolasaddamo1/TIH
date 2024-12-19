@@ -33,9 +33,6 @@ export class Caja {
     @Column({ type: 'varchar', length: 500, nullable: true })
     observaciones: string;
 
-    @Column({ type: 'varchar', length: 100, nullable: true })
-    description: string;
-
     @Column({ type: 'enum', enum: Comision, default:Comision.VENTA })
     comision: Comision;
 

@@ -30,11 +30,6 @@ export class UpdateCajaDto {
   observaciones?: string;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(500)
-  description?: string;
-
-  @IsOptional()
   @IsEnum(Comision)
   comision?: Comision;
 

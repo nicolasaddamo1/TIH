@@ -28,11 +28,6 @@ export class CreateCajaDto {
   @MaxLength(250)
   observaciones?: string;
 
-  @IsOptional()
-  @IsString()
-  @MaxLength(500)
-  description?: string;
-
   @IsEnum(Comision)
   comision: Comision;
 

@@ -96,7 +96,6 @@ export class CajaService {
             throw new Error('Algunos productos especificados no existen.');
         }
     
-        // Crear la nueva caja con los productos completos
         const nuevaCaja = this.cajaRepository.create({
             ...data,
             vendedor,
