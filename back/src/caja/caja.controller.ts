@@ -24,6 +24,14 @@ export class CajaController {
     ): Promise<Caja[]> {
         return this.cajaService.getCajasByDateRange(startDate, endDate);
     }
+    @Get('comisiones')
+    async getComisionesByVendedor(
+        @Query('startDate') startDate: string,
+        @Query('endDate') endDate: string,
+        @Query('vendedorId') vendedorId: string,
+    ):  Promise<any> {
+        return this.cajaService.getVentasYComisionesByVendedor(startDate, endDate, vendedorId);
+    }
 
     @Post()
     async createCaja(

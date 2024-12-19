@@ -35,5 +35,5 @@ export class UpdateCajaDto {
 
   @IsOptional()
   @IsUUID()
-  vendedor?: string; // ID del vendedor (usuario)
+  vendedor?: string; 
 }

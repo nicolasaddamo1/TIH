@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Caja } from 'src/Entity/caja.entity';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { UpdateCajaDto } from './dto/updateCaja.dto';
 import { CreateCajaDto } from './dto/createCaja.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -109,4 +109,101 @@ export class CajaService {
     async deleteCaja(id: string) {
         return this.cajaRepository.delete(id);
     }
+    async getVentasYComisionesByVendedor(
+        startDate: string,
+        endDate: string,
+        vendedorId?: string
+    ): Promise<{
+        vendedorId: string;
+        ventas: {
+            id: string;
+            fecha: string;
+            comision: number;
+            tipoComision: string;
+        }[];
+        totalComision: number;
+    }[]> {
+        // Definir las variables para los valores de comisión
+        const comisionVentaAccesorio = 100; // Monto fijo para ventas de accesorios
+        const comisionVentaCelular = 2000; // Monto fijo para ventas de celulares
+    
+        const queryBuilder = this.cajaRepository.createQueryBuilder('caja')
+            .select('caja.vendedorId', 'vendedorId')
+            .addSelect('caja.id', 'ventaId')
+            .addSelect('caja.fecha', 'fecha')
+            .addSelect('caja.comision', 'comision')
+            .addSelect('caja.comision', 'tipoComision') // Asegúrate de ajustar esta columna si tienes diferentes tipos de comisiones
+            .where('caja.fecha >= :startDate', { startDate })
+            .andWhere('caja.fecha <= :endDate', { endDate });
+    
+        // Si se proporciona vendedorId, agregar al filtro
+        if (vendedorId) {
+            queryBuilder.andWhere('caja.vendedorId = :vendedorId', { vendedorId });
+        }
+    
+        queryBuilder.addOrderBy('caja.vendedorId', vendedorId ? undefined : 'ASC')
+            .addOrderBy('caja.comision', 'DESC')
+            .addOrderBy('caja.fecha', 'ASC');
+    
+        const rawResults = await queryBuilder.getRawMany();
+    
+        if (vendedorId && rawResults.length === 0) {
+            throw new Error(`No se encontraron ventas para el vendedor con ID: ${vendedorId}`);
+        }
+    
+        // Definir el tipo del objeto agrupado
+        type GroupedResults = {
+            [key: string]: {
+                vendedorId: string;
+                ventas: {
+                    id: string;
+                    fecha: string;
+                    comision: number;
+                    tipoComision: string;
+                }[];
+                totalComision: number;
+            };
+        };
+    
+        const groupedResults: GroupedResults = rawResults.reduce((acc, row) => {
+            const vendedorId = row.vendedorId;
+            if (!acc[vendedorId]) {
+                acc[vendedorId] = {
+                    vendedorId,
+                    ventas: [],
+                    totalComision: 0,
+                };
+            }
+    
+            // Determinar la comisión dependiendo del tipo
+            let comision = 0;
+            if (row.tipoComision === 'Venta') {
+                comision = comisionVentaAccesorio;
+            } else if (row.tipoComision === 'Celular') {
+                comision = comisionVentaCelular;
+            }
+    
+            acc[vendedorId].ventas.push({
+                id: row.ventaId,
+                fecha: row.fecha,
+                comision,
+                tipoComision: row.tipoComision,
+            });
+            acc[vendedorId].totalComision += comision;
+            return acc;
+        }, {} as GroupedResults);
+    
+        // Convertir el objeto agrupado en un array
+        return Object.values(groupedResults).map((group) => ({
+            vendedorId: group.vendedorId,
+            ventas: group.ventas.sort((a, b) => {
+                if (a.tipoComision === b.tipoComision) {
+                    return new Date(a.fecha).getTime() - new Date(b.fecha).getTime();
+                }
+                return a.tipoComision.localeCompare(b.tipoComision);
+            }),
+            totalComision: group.totalComision,
+        }));
+    }
+       
 }
