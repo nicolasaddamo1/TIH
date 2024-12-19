@@ -105,18 +105,23 @@ const SalesForm: React.FC = () => {
   const calculateTotalPrice = () => {
     return cart.reduce((sum, item) => sum + item.product.precio * item.quantity, 0);
   };
-
+  console.log("Cliente state: ", cliente)
   // Manejar búsqueda de cliente
   const handleClienteSearch = () => {
     if (clienteDni) {
-      axios.get(`${import.meta.env.VITE_API_URL}/clientes/${clienteDni}`).then((response) => {
-        if (response.data) {
-          setCliente(response.data.id);
-          alert('Cliente encontrado');
-        } else {
+      axios.get(`${import.meta.env.VITE_API_URL}/clientes/${clienteDni}`)
+        .then((response) => {
+          if (response.data) {
+            console.log("Cliente encontrado:", response.data);
+            setCliente(response.data.id);
+            setClienteData(response.data); // Opcional: si quieres mostrar los datos
+            alert('Cliente encontrado');
+          }
+        })
+        .catch(error => {
+          console.error("Error buscando cliente:", error);
           alert('Cliente no encontrado');
-        }
-      });
+        });
     }
   };
 
@@ -289,11 +294,16 @@ const SalesForm: React.FC = () => {
         </div>
 
         <button
-          onClick={handleAddToCart}
-          className="bg-blue-500 w-full px-3 py-2 rounded-md text-white hover:bg-blue-600 mb-4"
-        >
+            type="button" // Cambia el tipo de botón a "button" para que no envíe el formulario
+            onClick={(e) => {
+              e.preventDefault(); // Previene el envío del formulario
+              handleAddToCart();  // Llama a la función de agregar al carrito
+            }}
+            className="bg-blue-500 w-full px-3 py-2 rounded-md text-white hover:bg-blue-600 mb-4"
+          >
           Agregar al carrito
         </button>
+
 
         {/* Resumen del carrito */}
         <div className="bg-gray-900 p-4 rounded-md text-white">
