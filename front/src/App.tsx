@@ -5,6 +5,7 @@ import ProductForm from './components/ProductForm'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import ServiceForm from './components/ServiceForm'
 import SalesForm from './components/SalesForm'
+import Dashboard from './components/Dashboard'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/sales" element={<SalesForm/>} />
           <Route path="/products" element={<ProductForm />} />
           <Route path="/metrics" element={<MetricsByDateRange />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </>
