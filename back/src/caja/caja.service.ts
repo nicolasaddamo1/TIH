@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from 'src/Entity/usuario.entity';
 import { Producto, Cellphone } from 'src/Entity/producto.entity';
 import { Cliente } from 'src/Entity/cliente.entity';
+import { MedioDePago } from 'src/enum/medioDePago.enum';
 
 @Injectable()
 export class CajaService {
@@ -23,6 +24,7 @@ export class CajaService {
         return this.cajaRepository.find({take: limit});
     }
 
+    //metrica de ventas por fechas
     async getCajasByDateRange(startDate: string, endDate: string): Promise<Caja[]> {
       const queryBuilder = this.cajaRepository.createQueryBuilder('caja');
   
@@ -109,6 +111,7 @@ export class CajaService {
     async deleteCaja(id: string) {
         return this.cajaRepository.delete(id);
     }
+    //metrica de comisiones por vendedor
     async getVentasYComisionesByVendedor(
         startDate: string,
         endDate: string,
@@ -205,5 +208,22 @@ export class CajaService {
             totalComision: group.totalComision,
         }));
     }
-       
+    //metrica de tipo de pago
+    async getCajasByTypeOfPayment(
+        startDate: string,
+        endDate: string,
+        medioDePago?: MedioDePago
+    ): Promise<Caja[]> {
+        const queryBuilder = this.cajaRepository.createQueryBuilder('caja')
+            .where('caja.fecha >= :startDate', { startDate })
+            .andWhere('caja.fecha <= :endDate', { endDate });
+    
+        // Agregar filtro por medio de pago si se proporciona
+        if (medioDePago) {
+            queryBuilder.andWhere('caja.medioDePago = :medioDePago', { medioDePago });
+        }
+    
+        return queryBuilder.getMany();
+    }
+    
 }

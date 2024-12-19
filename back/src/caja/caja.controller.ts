@@ -3,6 +3,7 @@ import { CajaService } from './caja.service';
 import { UpdateCajaDto } from './dto/updateCaja.dto';
 import { CreateCajaDto } from './dto/createCaja.dto';
 import { Caja } from 'src/Entity/caja.entity';
+import { MedioDePago } from 'src/enum/medioDePago.enum';
 
 @Controller('caja')
 export class CajaController {
@@ -31,6 +32,14 @@ export class CajaController {
         @Query('vendedorId') vendedorId: string,
     ):  Promise<any> {
         return this.cajaService.getVentasYComisionesByVendedor(startDate, endDate, vendedorId);
+    }
+    @Get('tipo-de-pago')
+    async getCajasByTypeOfPayment(
+        @Query('startDate') startDate: string,
+        @Query('endDate') endDate: string,
+        @Query('medioDePago') medioDePago?: MedioDePago,
+    ): Promise<Caja[]> {
+        return this.cajaService.getCajasByTypeOfPayment(startDate, endDate, medioDePago);
     }
 
     @Post()
