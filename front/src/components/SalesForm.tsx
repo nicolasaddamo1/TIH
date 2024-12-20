@@ -39,6 +39,8 @@ const SalesForm: React.FC = () => {
   const [medioDePago, setMedioDePago] = useState('MercadoPago');
   const [observaciones, setObservaciones] = useState('');
   const [vendedorId, setVendedorId] = useState('');
+  
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -151,6 +153,7 @@ const SalesForm: React.FC = () => {
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/caja`, cajaData);
       alert('Venta registrada con éxito');
+      
     } catch (error) {
       console.error('Error al registrar la venta:', error);
       alert('Hubo un problema al registrar la venta');
@@ -158,117 +161,113 @@ const SalesForm: React.FC = () => {
   };
   
   return (
-    <form onSubmit={handleSubmit} className="flex justify-center items-center h-screen bg-gray-800">
-      <div className="backdrop-blur-md bg-white/30 p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-center text-2xl font-semibold mb-4">Venta de Productos</h2>
-
-        {/* Selección de cliente */}
-        <div>
-          <label>
-            Cliente:
-            <select
-              onChange={(e) => setIsNuevoCliente(e.target.value === 'Nuevo')}
-              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
-            >
-              <option value="Registrado">Cliente ya Registrado</option>
-              <option value="Nuevo">Cliente Nuevo</option>
-            </select>
-          </label>
-        </div>
-
+    <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-4 p-6 h-screen bg-gray-800">
+      {/* Columna izquierda - Cliente */}
+      <div className="col-span-1 p-4 bg-gray-900 rounded-md shadow-lg">
+        <h2 className="text-xl font-semibold mb-4 text-white">Información del Cliente</h2>
+        <label>
+          <span className="text-white">Cliente:</span>
+          <select
+            onChange={(e) => setIsNuevoCliente(e.target.value === 'Nuevo')}
+            className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
+          >
+            <option value="Registrado">Cliente ya Registrado</option>
+            <option value="Nuevo">Cliente Nuevo</option>
+          </select>
+        </label>
         {isNuevoCliente ? (
-          <div>
+          <>
             <input
               type="text"
               placeholder="DNI"
               value={clienteData.dni}
               onChange={(e) => setClienteData({ ...clienteData, dni: e.target.value })}
-              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+              className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
             />
             <input
               type="text"
               placeholder="Nombre"
               value={clienteData.nombre}
               onChange={(e) => setClienteData({ ...clienteData, nombre: e.target.value })}
-              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+              className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
             />
             <input
               type="text"
               placeholder="Apellido"
               value={clienteData.apellido}
               onChange={(e) => setClienteData({ ...clienteData, apellido: e.target.value })}
-              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+              className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
             />
             <input
               type="text"
               placeholder="Dirección"
               value={clienteData.direccion}
               onChange={(e) => setClienteData({ ...clienteData, direccion: e.target.value })}
-              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+              className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
             />
             <input
               type="text"
               placeholder="Teléfono"
               value={clienteData.nroTelefono}
               onChange={(e) => setClienteData({ ...clienteData, nroTelefono: e.target.value })}
-              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+              className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
             />
-            {isNuevoCliente && (
             <button
-                type="button"
-                onClick={async () => {
+              type="button"
+              onClick={async () => {
                 if (clienteData.dni && clienteData.nombre && clienteData.apellido) {
-                    try {
+                  try {
                     const response = await axios.post(`${import.meta.env.VITE_API_URL}/clientes`, clienteData);
-                    setCliente(response.data);  // Establecer cliente recién creado
+                    setCliente(response.data);
                     alert('Cliente creado con éxito');
-                    } catch (error) {
+                  } catch (error) {
                     console.error('Error al crear el cliente:', error);
                     alert('Error al crear el cliente');
-                    }
+                  }
                 } else {
-                    alert('Por favor complete todos los campos del cliente.');
+                  alert('Por favor complete todos los campos del cliente.');
                 }
-                }}
-                className="bg-green-500 w-full px-3 py-2 rounded-md text-white hover:bg-green-600 mb-4"
+              }}
+              className="bg-green-500 w-full px-3 py-2 rounded-md text-white hover:bg-green-600"
             >
-                Crear Cliente
+              Crear Cliente
             </button>
-            )}
-          </div>
+          </>
         ) : (
-          <div>
+          <>
             <input
               type="text"
               placeholder="Buscar Cliente por DNI"
               value={clienteDni}
               onChange={(e) => setClienteDni(e.target.value)}
-              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+              className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
             />
             <button
               type="button"
               onClick={handleClienteSearch}
-              className="w-full bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 mb-4"
+              className="w-full bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600"
             >
               Buscar Cliente
             </button>
-          </div>
+          </>
         )}
-
-        {/* Selección de categoría y productos */}
+      </div>
+  
+      {/* Columna central - Productos y carrito */}
+      <div className="col-span-1 p-4 bg-gray-900 rounded-md shadow-lg">
+        <h2 className="text-xl font-semibold mb-4 text-white">Venta de Productos</h2>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value as Categoria)}
-          className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+          className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
         >
           <option value={Categoria.ACCESORIOS}>Accesorios</option>
           <option value={Categoria.CELULARES}>Celulares</option>
         </select>
-
         <select
           value={selectedProduct}
           onChange={(e) => setSelectedProduct(e.target.value)}
-          className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
+          className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
         >
           {productos.map((producto) => (
             <option key={producto.id} value={producto.id}>
@@ -276,50 +275,36 @@ const SalesForm: React.FC = () => {
             </option>
           ))}
         </select>
-
-        <div className="mb-4">
-          <label htmlFor="quantity" className="block text-white mb-1">
-            Cantidad:
-          </label>
-          <input
-            id="quantity"
-            type="number"
-            min="1"
-            max={productos.find((p) => p.id === selectedProduct)?.stock || 1}
-            value={selectedQuantity}
-            onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-            className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
-          />
-        </div>
-
+        <label htmlFor="quantity" className="block text-white mb-1">Cantidad:</label>
+        <input
+          id="quantity"
+          type="number"
+          min="1"
+          max={productos.find((p) => p.id === selectedProduct)?.stock || 1}
+          value={selectedQuantity}
+          onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+          className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
+        />
         <button
-            type="button" // Cambia el tipo de botón a "button" para que no envíe el formulario
-            onClick={(e) => {
-              e.preventDefault(); // Previene el envío del formulario
-              handleAddToCart();  // Llama a la función de agregar al carrito
-            }}
-            className="bg-blue-500 w-full px-3 py-2 rounded-md text-white hover:bg-blue-600 mb-4"
-          >
+          type="button"
+          onClick={handleAddToCart}
+          className="bg-blue-500 w-full px-3 py-2 rounded-md text-white hover:bg-blue-600 mb-4"
+        >
           Agregar al carrito
         </button>
-
-
-        {/* Resumen del carrito */}
-        <div className="bg-gray-900 p-4 rounded-md text-white">
-          <h3 className="text-lg font-semibold mb-2">Carrito</h3>
+        <div className="bg-gray-700 p-4 rounded-md">
+          <h3 className="text-lg font-semibold mb-2 text-white">Carrito</h3>
           {cart.length === 0 ? (
-            <p className="text-sm">No hay productos en el carrito.</p>
+            <p className="text-sm text-gray-300">No hay productos en el carrito.</p>
           ) : (
             <ul className="space-y-2">
               {cart.map((item) => (
-                <li key={item.product.id} className="flex justify-between items-center">
-                  <div>
-                    <span>{item.product.nombre} (x{item.quantity})</span>
-                    <p className="text-sm">${item.product.precio * item.quantity}</p>
-                  </div>
+                <li key={item.product.id} className="flex justify-between items-center text-white">
+                  <span>{item.product.nombre} (x{item.quantity})</span>
+                  <p className="text-sm">${item.product.precio * item.quantity}</p>
                   <button
                     onClick={() => handleRemoveFromCart(item.product.id)}
-                    className="bg-red-500 px-3 py-1 rounded-md text-white hover:bg-red-600"
+                    className="bg-red-500 px-2 py-1 rounded-md text-white hover:bg-red-600"
                   >
                     Eliminar
                   </button>
@@ -327,14 +312,18 @@ const SalesForm: React.FC = () => {
               ))}
             </ul>
           )}
-          <p className="mt-2 font-semibold">Total: ${calculateTotalPrice()}</p>
+          <p className="mt-2 font-semibold text-white">Total: ${calculateTotalPrice()}</p>
         </div>
-        <div className="mb-4">
-        <label className="block mb-2">Medio de Pago:</label>
+      </div>
+  
+      {/* Columna derecha - Pago */}
+      <div className="col-span-1 p-4 bg-gray-900 rounded-md shadow-lg">
+        <h2 className="text-xl font-semibold mb-4 text-white">Pago y Observaciones</h2>
+        <label className="block text-white mb-2">Medio de Pago:</label>
         <select
-          value={medioDePago} // Conecta el valor al estado
-          onChange={handleChangeMedioDePago} // Actualiza el estado al cambiar
-          className="w-full p-2 bg-gray-700 text-white rounded-md"
+          value={medioDePago}
+          onChange={handleChangeMedioDePago}
+          className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
         >
           <option value="">Seleccione un medio de pago</option>
           <option value="MercadoPago">MercadoPago</option>
@@ -342,26 +331,20 @@ const SalesForm: React.FC = () => {
           <option value="Laura">Laura</option>
           <option value="CuentaDNI">CuentaDNI</option>
         </select>
-      </div>
-
-        {/* Observaciones y descripción */}
-        <div>
-          <label>
-            Observaciones:
-            <input
-              type="text"
-              value={observaciones}
-              onChange={(e) => setObservaciones(e.target.value)}
-              className="w-full p-3 rounded-md bg-gray-800 mb-4 text-white"
-            />
-          </label>
-        </div>
+        <label className="block text-white mb-2">Observaciones:</label>
+        <input
+          type="text"
+          value={observaciones}
+          onChange={(e) => setObservaciones(e.target.value)}
+          className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
+        />
         <button type="submit" className="bg-green-500 w-full px-3 py-2 rounded-md text-white hover:bg-green-600">
           Registrar Venta
         </button>
       </div>
     </form>
   );
+  
 };
 
 export default SalesForm;
