@@ -2,14 +2,20 @@
 import React, { useState } from 'react';
 
 interface Product {
-  name: string;
-  price: string;
+  nombre: string;
+  precio: string;
   stock: string;
-  image: File | null;
+  imagen: File | null;
+  categoria: string;
 }
 
 const ProductForm: React.FC = () => {
-  const [product, setProduct] = useState<Product>({ name: '', price: '', stock: '', image: null });
+  const [product, setProduct] = useState<Product>({
+    nombre: '',
+    precio: '',
+    stock: '',
+    imagen: null,
+    categoria:'' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,11 +28,48 @@ const ProductForm: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Producto cargado correctamente');
-    // Aquí envías los datos del producto a la base de datos
-    setProduct({ name: '', price: '', stock: '', image: null });
+    const url = `${import.meta.env.VITE_API_URL}/producto`;
+    
+    // Asegúrate de que `cellphone` tenga los datos correctos antes de enviar.
+    const productData = {
+      nombre: product.nombre,
+      precio: product.precio,
+      stock: product.stock,
+      imagen: product.imagen, // Esto debe ser manejado correctamente si es un archivo.
+      categoria: product.categoria,
+    };
+  
+    try {
+       const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productData),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      alert('Producto cargado correctamente');
+      
+      // Reseteamos el formulario después de enviar los datos.
+      setProduct({
+        nombre: '',
+        precio: '',
+        stock: '',
+        imagen: null,
+        categoria: '',
+      });
+    } catch (error) {
+      console.error('Error al enviar los datos:', error);
+      alert('Hubo un error al cargar el producto');
+    }
+  
   };
 
   return (
@@ -36,19 +79,19 @@ const ProductForm: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
-            name="name"
+            name="nombre"
             placeholder="Nombre del producto"
-            value={product.name}
+            value={product.nombre}
             onChange={handleChange}
-            className="w-full p-3 rounded-md bg-gray-50"
+            className="w-full p-3 rounded-md bg-gray-800"
           />
           <input
             type="number"
-            name="price"
+            name="precio"
             placeholder="Precio"
-            value={product.price}
+            value={product.precio}
             onChange={handleChange}
-            className="w-full p-3 rounded-md bg-gray-50"
+            className="w-full p-3 rounded-md bg-gray-800"
           />
           <input
             type="number"
@@ -56,13 +99,21 @@ const ProductForm: React.FC = () => {
             placeholder="Stock"
             value={product.stock}
             onChange={handleChange}
-            className="w-full p-3 rounded-md bg-gray-50"
+            className="w-full p-3 rounded-md bg-gray-800"
           />
+            <input
+              type="text"
+              name="categoria"
+              placeholder="categoria"
+              value={product.categoria}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md bg-gray-800"
+            />
           <input
             type="file"
-            name="image"
+            name="imagen"
             onChange={handleImageChange}
-            className="w-full p-3 rounded-md bg-gray-50"
+            className="w-full p-3 rounded-md bg-gray-800"
           />
           <button type="submit" className="w-full p-3 rounded-md bg-blue-500 text-white">
             Cargar Producto
