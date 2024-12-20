@@ -28,6 +28,12 @@ export class ProductoService {
         return await this.productoRepository.save(product)
     
     }
+    async createCellphone(data:CreateProductDto){
+
+        const product = await this.productoRepository.create(data)
+        return await this.productoRepository.save(product)
+    
+    }
 
     async updateProducts(id:string, data:UpdateProductDto){
 
