@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator"
+import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator"
 
 export class CreateCellhponeDto {
 
@@ -22,8 +22,8 @@ export class CreateCellhponeDto {
     @IsString()
     categoria?: string
 
-    @IsNotEmpty()
-    fechaCompra: Date;
+    @IsOptional()
+    fechaCompra?: Date;
     
     @IsOptional()
     @IsString()
