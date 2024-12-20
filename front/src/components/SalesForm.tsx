@@ -117,6 +117,10 @@ const SalesForm: React.FC = () => {
         });
     }
   };
+  
+    const handleChangeMedioDePago = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setMedioDePago(e.target.value); 
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,10 +135,9 @@ const SalesForm: React.FC = () => {
         return;
       }
     }
-  
     // Determinar la comisión basado en la categoría seleccionada
     const tipoComision = category === Categoria.ACCESORIOS ? 'Venta' : 'Celular';
-  
+    
     const cajaData = {
       productos: cart.map((item) => item.product.id),
       comision: tipoComision, // Comision basada en la categoría seleccionada
@@ -326,6 +329,20 @@ const SalesForm: React.FC = () => {
           )}
           <p className="mt-2 font-semibold">Total: ${calculateTotalPrice()}</p>
         </div>
+        <div className="mb-4">
+        <label className="block mb-2">Medio de Pago:</label>
+        <select
+          value={medioDePago} // Conecta el valor al estado
+          onChange={handleChangeMedioDePago} // Actualiza el estado al cambiar
+          className="w-full p-2 bg-gray-700 text-white rounded-md"
+        >
+          <option value="">Seleccione un medio de pago</option>
+          <option value="MercadoPago">MercadoPago</option>
+          <option value="Efectivo">Efectivo</option>
+          <option value="Laura">Laura</option>
+          <option value="CuentaDNI">CuentaDNI</option>
+        </select>
+      </div>
 
         {/* Observaciones y descripción */}
         <div>
