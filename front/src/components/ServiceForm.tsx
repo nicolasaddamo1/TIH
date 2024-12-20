@@ -98,7 +98,7 @@ const ServiceForm: React.FC = () => {
             placeholder="Descripción"
             value={service.descripcion}
             onChange={handleChange}
-            className="w-full p-3 rounded-md bg-gray-50"
+            className="w-full p-3 rounded-md bg-gray-800"
           />
           <input
             type="number"
@@ -106,8 +106,10 @@ const ServiceForm: React.FC = () => {
             placeholder="Precio"
             value={service.precio}
             onChange={handleChange}
-            className="w-full p-3 rounded-md bg-gray-50"
+            className="w-full p-3 rounded-md bg-gray-800"
           />
+          {/* Id cliente */}
+          {/* Id cliente */}
           <button type="submit" className="w-full p-3 rounded-md bg-blue-500 text-white">
             Crear Servicio
           </button>

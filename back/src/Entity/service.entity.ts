@@ -17,4 +17,6 @@ export class Service {
 
     @ManyToOne(() => Usuario, usuario => usuario.service, { cascade: true, onDelete: 'CASCADE' })
     usuario: Usuario;
+
+    // unificar con caja, seña y resto se hacen 
 }
