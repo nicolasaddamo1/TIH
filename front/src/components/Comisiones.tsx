@@ -1,7 +1,6 @@
 // Dashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import DashboardContainer from './DashboardContainer';
 
 const Dashboard: React.FC = () => {
   const [selectedMetric, setSelectedMetric] = useState<string>('ventas');
@@ -120,13 +119,79 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Contenido de las métricas */}
-        <DashboardContainer 
-          startDate={startDate} 
-          endDate={endDate} 
-          selectedUser={selectedUser} 
-          fetchMetricsData={fetchMetricsData} 
-          metricsData={metricsData} 
-        />
+        <div className="w-full md:w-3/4 bg-gray-800 shadow-md rounded-lg p-6">
+          <h2 className="text-2xl font-semibold mb-6">
+            {selectedMetric === 'ventas' && 'Métricas de Ventas'}
+            {selectedMetric === 'comisiones' && 'Métricas de Comisiones'}
+          </h2>
+
+          {selectedMetric === 'comisiones' && (
+            <div className="mb-4">
+              {/* Selector de usuarios */}
+              <label className="block mb-2">Seleccionar Usuario:</label>
+              <select
+                value={selectedUser}
+                onChange={(e) => setSelectedUser(e.target.value)}
+                className="w-full p-2 bg-gray-700 text-white rounded-md mb-4"
+              >
+                <option value="">Seleccione un usuario</option>
+                {usuarios.map((usuario) => (
+                  <option key={usuario.id} value={usuario.id}>
+                    {usuario.nombre}
+                  </option>
+                ))}
+              </select>
+
+              {/* Filtros de fecha */}
+              <label className="block mb-2">Desde:</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full p-2 bg-gray-700 text-white rounded-md mb-4"
+              />
+              <label className="block mb-2">Hasta:</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full p-2 bg-gray-700 text-white rounded-md"
+              />
+            </div>
+          )}
+
+          {/* Botón para enviar datos */}
+          {selectedMetric === 'comisiones' && (
+            <div className="mb-4">
+              <button
+                onClick={handleSubmit}
+                className="bg-blue-600 text-white p-2 rounded-md w-full"
+              >
+                Obtener Comisiones
+              </button>
+            </div>
+          )}
+
+          {/* Mostrar datos de comisiones */}
+          {selectedMetric === 'comisiones' && metricsData && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {metricsData.map((item: any, index: number) => (
+                <div key={index} className="bg-gray-700 p-4 rounded-md shadow-md">
+                  <h3 className="text-lg font-semibold mb-2">Vendedor: {item.vendedorId}</h3>
+                  <p><strong>Total Comisión:</strong> {item.totalComision}</p>
+                  <h4 className="mt-4">Detalles:</h4>
+                  {item.ventas.map((venta: any) => (
+                    <div key={venta.id} className="mt-2 p-2 bg-gray-800 rounded-md">
+                      <p><strong>Fecha:</strong> {new Date(venta.fecha).toLocaleDateString()}</p>
+                      <p><strong>Comisión:</strong> {venta.comision}</p>
+                      <p><strong>Tipo:</strong> {venta.tipoComision}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
