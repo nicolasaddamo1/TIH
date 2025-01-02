@@ -18,4 +18,8 @@ descripcion?: string;
 @IsUUID('4')
 @IsOptional()
 usuario?: Usuario;
+
+@IsUUID('4')
+@IsOptional()
+cliente?: Usuario;
 }
