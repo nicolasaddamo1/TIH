@@ -5,7 +5,6 @@ import preloadData from './data.json';
 import { Usuario } from 'src/Entity/usuario.entity';
 import { Caja } from 'src/Entity/caja.entity';
 import { Producto, Cellphone } from 'src/Entity/producto.entity'; 
-import { Service } from 'src/Entity/service.entity';
 import { Factura } from 'src/Entity/factura.entity';
 import { Role } from 'src/enum/roles.enum';
 import * as bcrypt from 'bcrypt';
@@ -19,7 +18,6 @@ export class PreloadService implements OnApplicationBootstrap {
     @InjectRepository(Usuario) private readonly usuarioRepository: Repository<Usuario>,
     @InjectRepository(Caja) private readonly cajaRepository: Repository<Caja>,
     @InjectRepository(Producto) private readonly productoRepository: Repository<Producto>, // Añadir repositorio de Producto
-    @InjectRepository(Service) private readonly serviceRepository: Repository<Service>,
     @InjectRepository(Factura) private readonly facturaRepository: Repository<Factura>,
     @InjectRepository(Cellphone) private readonly cellphoneRepository: Repository<Cellphone>, // Añadir repositorio de Cellphone
     @InjectRepository(Cliente) private readonly clienteRepository: Repository<Cliente> // Añadir repositorio de Cellphone

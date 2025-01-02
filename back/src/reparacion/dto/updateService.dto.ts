@@ -5,7 +5,7 @@ export class UpdateServiceDto {
 
 @IsString()
 @IsOptional()
-id?: string;
+id: string;
 
 @IsNumber()
 @IsOptional()

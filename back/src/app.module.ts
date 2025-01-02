@@ -14,7 +14,6 @@ import { Usuario } from './Entity/usuario.entity';
 import { Producto, Cellphone } from './Entity/producto.entity';
 import { Caja } from './Entity/caja.entity';
 import { Factura } from './Entity/factura.entity';
-import { Service } from './Entity/service.entity';
 import { PreloadService } from './preload/preload.service';
 import { Cliente } from './Entity/cliente.entity';
 import { ClienteModule } from './cliente/cliente.module';
@@ -39,7 +38,7 @@ import { ClienteModule } from './cliente/cliente.module';
         synchronize: true, 
       }),
     }),
-    TypeOrmModule.forFeature([Usuario, Producto,  Caja, Factura, Service, Cellphone, Cliente]),
+    TypeOrmModule.forFeature([Usuario, Producto,  Caja, Factura, Cellphone, Cliente]),
     JwtModule.register({
       global: true,
       signOptions: {

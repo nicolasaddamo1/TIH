@@ -2,7 +2,6 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn
 import { Factura } from "./factura.entity";
 import { IsBoolean } from "class-validator";
 import { Role } from "src/enum/roles.enum";
-import { Service } from "./service.entity";
 import { Caja } from "./caja.entity";
 
 @Entity('usuario')
@@ -47,7 +46,5 @@ export class Usuario {
     @OneToMany(() => Caja, caja => caja.vendedor)
     cajas: Caja[];
 
-    @OneToOne(() => Service, service => service.usuario, { nullable: true, eager: true })
-    @JoinColumn()
-    service: Service | null;
+
 }
