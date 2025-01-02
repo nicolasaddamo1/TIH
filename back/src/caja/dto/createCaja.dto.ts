@@ -6,9 +6,9 @@ export class CreateCajaDto {
   @IsInt()
   precioTotal: number;
 
-  @IsUUID('4', { each: true, })
-  productos: string[]; 
-
+  @IsOptional()
+  @IsUUID('4', { each: true })
+  productos?: string[];
   @IsEnum(MedioDePago)
   medioDePago: MedioDePago;
 
