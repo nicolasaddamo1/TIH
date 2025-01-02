@@ -1,25 +1,30 @@
 //src/components/ProductForm.tsx
 import React, { useState } from 'react';
 
-interface Product {
+interface Cellphone {
   nombre: string;
   precio: string;
   stock: string;
   imagen: File | null;
-  categoria: string;
-}
+  categoria:string;
+  estado:string;
+  descripcionEstado:string;
+  }
 
-const ProductForm: React.FC = () => {
-  const [product, setProduct] = useState<Product>({
-    nombre: '',
-    precio: '',
-    stock: '',
-    imagen: null,
-    categoria:'' });
+const CellphoneForm: React.FC = () => {
+  const [cellphone, setCellphone] = useState<Cellphone>({
+     nombre: '',
+     precio: '',
+     stock: '',
+     imagen: null,
+     categoria:'',
+     estado:'',
+     descripcionEstado:''
+     });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setProduct((prevProduct) => ({ ...prevProduct, [name]: value }));
+    setCellphone((prevCell) => ({ ...prevCell, [name]: value }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,26 +33,29 @@ const ProductForm: React.FC = () => {
     }
   };
 
-   const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const url = `${import.meta.env.VITE_API_URL}/producto`;
+  
+    const url = `${import.meta.env.VITE_API_URL}/producto/celulares`;
     
     // Asegúrate de que `cellphone` tenga los datos correctos antes de enviar.
-    const productData = {
-      nombre: product.nombre,
-      precio: product.precio,
-      stock: product.stock,
-      imagen: product.imagen, // Esto debe ser manejado correctamente si es un archivo.
-      categoria: product.categoria,
+    const cellphoneData = {
+      nombre: cellphone.nombre,
+      precio: cellphone.precio,
+      stock: cellphone.stock,
+      imagen: cellphone.imagen, // Esto debe ser manejado correctamente si es un archivo.
+      categoria: cellphone.categoria,
+      estado: cellphone.estado,
+      descripcionEstado: cellphone.descripcionEstado,
     };
   
     try {
-       const response = await fetch(url, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(productData),
+        body: JSON.stringify(cellphoneData),
       });
   
       if (!response.ok) {
@@ -58,19 +66,21 @@ const ProductForm: React.FC = () => {
       alert('Producto cargado correctamente');
       
       // Reseteamos el formulario después de enviar los datos.
-      setProduct({
+      setCellphone({
         nombre: '',
         precio: '',
         stock: '',
         imagen: null,
         categoria: '',
+        estado: '',
+        descripcionEstado: '',
       });
     } catch (error) {
       console.error('Error al enviar los datos:', error);
       alert('Hubo un error al cargar el producto');
     }
-  
   };
+  
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-800">
@@ -81,7 +91,7 @@ const ProductForm: React.FC = () => {
             type="text"
             name="nombre"
             placeholder="Nombre del producto"
-            value={product.nombre}
+            value={cellphone.nombre}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-800"
           />
@@ -89,7 +99,7 @@ const ProductForm: React.FC = () => {
             type="number"
             name="precio"
             placeholder="Precio"
-            value={product.precio}
+            value={cellphone.precio}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-800"
           />
@@ -97,18 +107,35 @@ const ProductForm: React.FC = () => {
             type="number"
             name="stock"
             placeholder="Stock"
-            value={product.stock}
+            value={cellphone.stock}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-800"
           />
-            <input
-              type="text"
-              name="categoria"
-              placeholder="categoria"
-              value={product.categoria}
-              onChange={handleChange}
-              className="w-full p-3 rounded-md bg-gray-800"
-            />
+          <input
+            type="text"
+            name="categoria"
+            placeholder="Categoría"
+            value={cellphone.categoria}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md bg-gray-800"
+          />
+
+          <input
+            type="text"
+            name="estado"
+            placeholder="estado"
+            value={cellphone.estado}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md bg-gray-800"
+          />
+          <input
+            type="text"
+            name="descripcionEstado"
+            placeholder="Describir el estado"
+            value={cellphone.descripcionEstado}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md bg-gray-800"
+          />
           <input
             type="file"
             name="imagen"
@@ -124,4 +151,4 @@ const ProductForm: React.FC = () => {
   );
 };
 
-export default ProductForm;
+export default CellphoneForm;

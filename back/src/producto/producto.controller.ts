@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductDto } from './dto/product.dto';
+import { CreateCellhponeDto } from './dto/cellphone.dto';
 
 @Controller('producto')
 export class ProductoController {
@@ -29,6 +30,12 @@ export class ProductoController {
         @Body()data:CreateProductDto
     ){
         return this.productoService.createProducts(data)
+    }
+    @Post('celulares')
+    async createCellphone(
+        @Body()data:CreateCellhponeDto
+    ){
+        return this.productoService.createCellphone(data)
     }
 
     @Put(':id')
