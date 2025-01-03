@@ -9,6 +9,7 @@ interface Cellphone {
   categoria:string;
   estado:string;
   descripcionEstado:string;
+  imei:string;
   }
 
 const CellphoneForm: React.FC = () => {
@@ -19,7 +20,8 @@ const CellphoneForm: React.FC = () => {
      imagen: null,
      categoria:'',
      estado:'',
-     descripcionEstado:''
+     descripcionEstado:'',
+     imei:''
      });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +49,7 @@ const CellphoneForm: React.FC = () => {
       categoria: cellphone.categoria,
       estado: cellphone.estado,
       descripcionEstado: cellphone.descripcionEstado,
+      imei: cellphone.imei
     };
   
     try {
@@ -74,6 +77,7 @@ const CellphoneForm: React.FC = () => {
         categoria: '',
         estado: '',
         descripcionEstado: '',
+        imei: ''
       });
     } catch (error) {
       console.error('Error al enviar los datos:', error);
@@ -133,6 +137,14 @@ const CellphoneForm: React.FC = () => {
             name="descripcionEstado"
             placeholder="Describir el estado"
             value={cellphone.descripcionEstado}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md bg-gray-800"
+          />
+          <input
+            type="text"
+            name="imei"
+            placeholder="Imei"
+            value={cellphone.imei}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-800"
           />

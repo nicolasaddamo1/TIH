@@ -35,4 +35,7 @@ export class Cellphone extends Producto {
 
     @Column({ type: "varchar", length: 100, nullable: true })
     descripcionEstado?: string;
+
+    @Column({ type: "varchar", length: 50 })
+    imei: string;
 }

@@ -32,6 +32,10 @@ export class CreateCellhponeDto {
     @IsNotEmpty()
     @IsString()
     estado: string;
+
+    @IsNotEmpty()
+    @IsString()
+    imei: string;
     
     @IsString()
     @IsOptional()
@@ -74,5 +78,9 @@ export class UpdateCellphoneDto {
     @IsString()
     @IsOptional()
     descripcionEstado?: string;
+    
+    @IsString()
+    @IsOptional()
+    imei?
 
 }
