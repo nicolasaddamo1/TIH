@@ -212,7 +212,8 @@ const Dashboard: React.FC = () => {
   
       <div className="flex-1 p-6 flex flex-col md:flex-row gap-6">
         {/* Sidebar de navegación */}
-        <div className="w-full md:w-1/4 bg-gray-800 shadow-md rounded-lg p-4">
+        <div className="flex-shrink-0 w-64 bg-gray-800 shadow-md rounded-lg p-4">
+        {/* <div className="w-full md:w-1/4 bg-gray-800 shadow-md rounded-lg p-4"> */}
           <h2 className="text-lg font-semibold mb-4">Métricas</h2>
           <ul className="space-y-4">
             <li>
@@ -243,7 +244,8 @@ const Dashboard: React.FC = () => {
         </div>
   
         {/* Contenido de las métricas */}
-        <div className="w-full md:w-3/4 bg-gray-800 shadow-md rounded-lg p-6">
+        <div className="flex-grow bg-gray-800 shadow-md rounded-lg p-6">
+        {/* <div className="w-full md:w-3/4 bg-gray-800 shadow-md rounded-lg p-6"> */}
           <h2 className="text-2xl font-semibold mb-6">
             {selectedMetric === 'ventas' && 'Métricas de Ventas'}
             {selectedMetric === 'comisiones' && 'Métricas de Comisiones'}

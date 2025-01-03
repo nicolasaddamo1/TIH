@@ -56,8 +56,8 @@ const MetodoDePagoTabla: React.FC<MetodoDePagoProps> = ({ startDate, endDate }) 
   };
 
   return (
-    <div>
-      <div className="w-full md:w-3/4 ">
+    <>
+      <div className="flex-grow bg-gray-800 shadow-md rounded-lg p-6" style={{ minWidth: '645px' }}>
         <label className="block mb-2">Seleccionar Método de Pago:</label>
         <select
           value={medioDePago}
@@ -73,7 +73,7 @@ const MetodoDePagoTabla: React.FC<MetodoDePagoProps> = ({ startDate, endDate }) 
       </div>
 
       {/* Filtros de fecha */}
-      <label className="block mb-2">Desde:</label>
+      <label className="">Desde:</label>
       <input
         type="date"
         value={localStartDate}
@@ -136,7 +136,7 @@ const MetodoDePagoTabla: React.FC<MetodoDePagoProps> = ({ startDate, endDate }) 
           </table>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
