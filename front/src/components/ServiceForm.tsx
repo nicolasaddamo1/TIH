@@ -148,8 +148,8 @@ const ServiceForm: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-800">
-      <div className="backdrop-blur-md bg-white/30 p-6 rounded-lg shadow-lg max-w-md w-full">
+    <div className="grid grid-cols-2 gap-4 p-6 h-max-md bg-gray-800">
+      <div className="col-span-1 p-4 backdrop-blur-md bg-white/30 p-6 rounded-lg shadow-lg max-w-md w-full">
         <div className="col-span-1 p-4 bg-gray-900 rounded-md shadow-lg">
           <h2 className="text-xl font-semibold mb-4 text-white">Información del Cliente</h2>
           <select
@@ -222,6 +222,10 @@ const ServiceForm: React.FC = () => {
             </>
           )}
         </div>
+      </div>
+      <div className="col-span-1 p-4 backdrop-blur-md bg-white/30 p-6 rounded-lg shadow-lg max-w-md w-full">
+        <div className="col-span-1 p-4 bg-gray-900 rounded-md shadow-lg">
+
         <h2 className="text-center text-2xl font-semibold mb-4">Registrar Servicio</h2>
         {message && <p className="text-center text-lg text-red-500">{message}</p>}
 
@@ -232,7 +236,7 @@ const ServiceForm: React.FC = () => {
             value={service.observaciones}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-800 text-white mb-4"
-          />
+            />
           <input
             type="number"
             name="precioTotal"
@@ -240,13 +244,13 @@ const ServiceForm: React.FC = () => {
             value={service.precioTotal || ''}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-800 text-white mb-4"
-          />
+            />
           <select
             name="medioDePago"
             value={service.medioDePago}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-800 text-white mb-4"
-          >
+            >
             {mediosDePago.map((medio) => (
               <option key={medio} value={medio}>
                 {medio}
@@ -259,11 +263,12 @@ const ServiceForm: React.FC = () => {
             value={service.fecha}
             onChange={handleChange}
             className="w-full p-3 rounded-md bg-gray-800 text-white mb-4"
-          />
+            />
           <button type="submit" className="bg-blue-500 w-full p-3 rounded-md text-white">
             Registrar Servicio
           </button>
         </form>
+        </div>
       </div>
     </div>
   );

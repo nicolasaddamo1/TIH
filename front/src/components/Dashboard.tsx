@@ -115,185 +115,281 @@ const Dashboard: React.FC = () => {
     }
   };
 
-const renderComisiones = () => {
-  if (!metricsData || !Array.isArray(metricsData)) return null;
+  const renderVentasTable = () => {
+    if (!metricsData || !Array.isArray(metricsData)) return null;
 
+    const calcularTotal = () => {
+      return metricsData.reduce((acc, venta) => acc + venta.precioTotal, 0);
+    };
+
+    return (
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left text-white">
+          <thead className="text-xs text-white uppercase bg-gray-700">
+            <tr>
+              <th className="px-6 py-3">Fecha</th>
+              <th className="px-6 py-3">Precio Total</th>
+              <th className="px-6 py-3">Medio de Pago</th>
+              <th className="px-6 py-3">Observaciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {metricsData.map((venta: any) => (
+              <tr key={venta.id} className="border-b bg-gray-800 border-gray-700 hover:bg-gray-600">
+                <td className="px-6 py-4">{new Date(venta.fecha).toLocaleDateString()}</td>
+                <td className="px-6 py-4">${venta.precioTotal.toLocaleString()}</td>
+                <td className="px-6 py-4">{venta.medioDePago}</td>
+                <td className="px-6 py-4">{venta.observaciones || '-'}</td>
+              </tr>
+            ))}
+            <tr className="bg-gray-700 font-bold">
+              <td className="px-6 py-4">TOTAL</td>
+              <td className="px-6 py-4">${calcularTotal().toLocaleString()}</td>
+              <td className="px-6 py-4"></td>
+              <td className="px-6 py-4"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  const renderComisionesTable = () => {
+    if (!metricsData || !Array.isArray(metricsData)) return null;
+
+    return (
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left text-white">
+          <thead className="text-xs text-white uppercase bg-gray-700">
+            <tr>
+              <th className="px-6 py-3">Fecha</th>
+              <th className="px-6 py-3">Comisión</th>
+              <th className="px-6 py-3">Tipo</th>
+              <th className="px-6 py-3">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {metricsData.map((item: any) => (
+              <>
+                {item.ventas.map((venta: any) => (
+                  <tr key={venta.id} className="border-b bg-gray-800 border-gray-700 hover:bg-gray-600">
+                    <td className="px-6 py-4">{new Date(venta.fecha).toLocaleDateString()}</td>
+                    <td className="px-6 py-4">${venta.comision.toLocaleString()}</td>
+                    <td className="px-6 py-4">{venta.tipoComision}</td>
+                    <td className="px-6 py-4">${item.totalComision.toLocaleString()}</td>
+                  </tr>
+                ))}
+                <tr className="bg-gray-700 font-bold">
+                  <td className="px-6 py-4">TOTAL COMISIÓN</td>
+                  <td className="px-6 py-4"></td>
+                  <td className="px-6 py-4"></td>
+                  <td className="px-6 py-4">${item.totalComision.toLocaleString()}</td>
+                </tr>
+              </>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {metricsData.map((item: any, index: number) => (
-        <div key={index} className="bg-gray-700 p-4 rounded-md shadow-md">
-          <p><strong>Total Comisión:</strong> {item.totalComision}</p>
-          <h4 className="mt-4">Detalles:</h4>
-          {item.ventas && item.ventas.map((venta: any) => (
-            <div key={venta.id} className="mt-2 p-2 bg-gray-800 rounded-md">
-              <p><strong>Fecha:</strong> {new Date(venta.fecha).toLocaleDateString()}</p>
-              <p><strong>Comisión:</strong> {venta.comision}</p>
-              <p><strong>Tipo:</strong> {venta.tipoComision}</p>
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-};
-
-// Luego el return principal
-return (
-  <div className="h-screen flex flex-col bg-gray-900 text-white">
-    {/* Navbar */}
-    <div className="flex justify-between items-center bg-gray-800 p-4">
-      <h1 className="text-xl font-semibold">Dashboard</h1>
-      <button
-        onClick={() => navigate('/')}
-        className="text-white bg-red-600 px-4 py-2 rounded-md"
-      >
-        Cerrar sesión
-      </button>
-    </div>
-
-    <div className="flex-1 p-6 flex flex-col md:flex-row gap-6">
-      {/* Sidebar de navegación */}
-      <div className="w-full md:w-1/4 bg-gray-800 shadow-md rounded-lg p-4">
-        <h2 className="text-lg font-semibold mb-4">Métricas</h2>
-        <ul className="space-y-4">
-          <li>
-            <button
-              onClick={() => setSelectedMetric('ventas')}
-              className={`w-full p-2 text-left rounded-md ${selectedMetric === 'ventas' ? 'bg-blue-600' : 'bg-gray-700'}`}
-            >
-              Ventas
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setSelectedMetric('comisiones')}
-              className={`w-full p-2 text-left rounded-md ${selectedMetric === 'comisiones' ? 'bg-blue-600' : 'bg-gray-700'}`}
-            >
-              Comisiones
-            </button>
-          </li>
-          <li>
-          <button
+    <div className="h-screen flex flex-col bg-gray-900 text-white">
+      {/* Navbar */}
+      <div className="flex justify-between items-center bg-gray-800 p-4">
+        <h1 className="text-xl font-semibold">Dashboard</h1>
+        <button
+          onClick={() => navigate('/')}
+          className="text-white bg-red-600 px-4 py-2 rounded-md"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+  
+      <div className="flex-1 p-6 flex flex-col md:flex-row gap-6">
+        {/* Sidebar de navegación */}
+        <div className="w-full md:w-1/4 bg-gray-800 shadow-md rounded-lg p-4">
+          <h2 className="text-lg font-semibold mb-4">Métricas</h2>
+          <ul className="space-y-4">
+            <li>
+              <button
+                onClick={() => setSelectedMetric('ventas')}
+                className={`w-full p-2 text-left rounded-md ${selectedMetric === 'ventas' ? 'bg-blue-600' : 'bg-gray-700'}`}
+              >
+                Ventas
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setSelectedMetric('comisiones')}
+                className={`w-full p-2 text-left rounded-md ${selectedMetric === 'comisiones' ? 'bg-blue-600' : 'bg-gray-700'}`}
+              >
+                Comisiones
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={() => setSelectedMetric('metodoDePago')}
                 className={`w-full p-2 text-left rounded-md ${selectedMetric === 'metodoDePago' ? 'bg-blue-600' : 'bg-gray-700'}`}
               >
                 Método de Pago
               </button>
-          </li>
-        </ul>
-      </div>
-
-      {/* Contenido de las métricas */}
-      <div className="w-full md:w-3/4 bg-gray-800 shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-semibold mb-6">
-          {selectedMetric === 'ventas' && 'Métricas de Ventas'}
-          {selectedMetric === 'comisiones' && 'Métricas de Comisiones'}
-          {selectedMetric === 'metodoDePago' && 'Método de Pago'}
-        </h2>
-
-        {selectedMetric === 'comisiones' && (
-          <div className="mb-4">
-            {/* Selector de usuarios */}
-            <label className="block mb-2">Seleccionar Usuario:</label>
-            <select
-              value={selectedUser}
-              onChange={(e) => setSelectedUser(e.target.value)}
-              className="w-full p-2 bg-gray-700 text-white rounded-md mb-4"
-            >
-              <option value="">Seleccione un usuario</option>
-              {usuarios.map((usuario) => (
-                <option key={usuario.id} value={usuario.id}>
-                  {usuario.nombre}
-                </option>
-              ))}
-            </select>
-
-            {/* Filtros de fecha */}
-            <label className="block mb-2">Desde:</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full p-2 bg-gray-700 text-white rounded-md mb-4"
-            />
-            <label className="block mb-2">Hasta:</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-full p-2 bg-gray-700 text-white rounded-md"
-            />
-          </div>
-        )}
-
-        {/* Botón para enviar datos */}
-        {selectedMetric === 'comisiones' && (
-          <div className="mb-4">
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-600 text-white p-2 rounded-md w-full"
-            >
-              Obtener Comisiones
-            </button>
-          </div>
-        )}
-
-        {/* Renderizado de comisiones usando la función */}
-        {selectedMetric === 'comisiones' && metricsData && renderComisiones()}
-
-        {/* Para Ventas */}
-        {selectedMetric === 'ventas' && (
-          <div className="mb-4">
-            {/* Filtros de fecha */}
-            <label className="block mb-2">Desde:</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full p-2 bg-gray-700 text-white rounded-md mb-4"
-            />
-            <label className="block mb-2">Hasta:</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-full p-2 bg-gray-700 text-white rounded-md"
-            />
-          </div>
-        )}
-
-        {/* Botón para enviar datos de ventas */}
-        {selectedMetric === 'ventas' && (
-          <div className="mb-4">
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-600 text-white p-2 rounded-md w-full"
-            >
-              Obtener Ventas
-            </button>
-          </div>
-        )}
-
-        {/* Mostrar datos de ventas */}
-        {selectedMetric === 'ventas' && metricsData && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {metricsData.map((venta: any, index: number) => (
-              <div key={venta.id} className="bg-gray-700 p-4 rounded-md shadow-md">
-                <p><strong>Precio Total:</strong> {venta.precioTotal}</p>
-                <p><strong>Medio de Pago:</strong> {venta.medioDePago}</p>
-                <p><strong>Fecha:</strong> {venta.fecha}</p>
-                <p><strong>Observaciones:</strong> {venta.observaciones || 'Ninguna'}</p>
+            </li>
+          </ul>
+        </div>
+  
+        {/* Contenido de las métricas */}
+        <div className="w-full md:w-3/4 bg-gray-800 shadow-md rounded-lg p-6">
+          <h2 className="text-2xl font-semibold mb-6">
+            {selectedMetric === 'ventas' && 'Métricas de Ventas'}
+            {selectedMetric === 'comisiones' && 'Métricas de Comisiones'}
+            {selectedMetric === 'metodoDePago' && 'Método de Pago'}
+          </h2>
+  
+          {/* Filtros y controles */}
+          <div className="mb-6">
+            {selectedMetric === 'comisiones' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block mb-2">Seleccionar Usuario:</label>
+                  <select
+                    value={selectedUser}
+                    onChange={(e) => setSelectedUser(e.target.value)}
+                    className="w-full p-2 bg-gray-700 text-white rounded-md"
+                  >
+                    <option value="">Seleccione un usuario</option>
+                    {usuarios.map((usuario) => (
+                      <option key={usuario.id} value={usuario.id}>
+                        {usuario.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block mb-2">Fecha</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="w-full p-2 bg-gray-700 text-white rounded-md"
+                    />
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="w-full p-2 bg-gray-700 text-white rounded-md"
+                    />
+                  </div>
+                </div>
               </div>
-            ))}
+            )}
+  
+            {selectedMetric === 'ventas' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-2">Fecha</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="w-full p-2 bg-gray-700 text-white rounded-md"
+                    />
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="w-full p-2 bg-gray-700 text-white rounded-md"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+  
+            {(selectedMetric === 'ventas' || selectedMetric === 'comisiones') && (
+              <button
+                onClick={handleSubmit}
+                className="bg-blue-600 text-white p-2 rounded-md w-full mt-4"
+              >
+                {`Obtener ${selectedMetric === 'ventas' ? 'Ventas' : 'Comisiones'}`}
+              </button>
+            )}
           </div>
-        )}
-
-        {selectedMetric === 'metodoDePago' && (
+  
+          {/* Tablas de datos */}
+          {selectedMetric === 'ventas' && metricsData && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left text-white">
+                <thead className="text-xs uppercase bg-gray-700">
+                  <tr>
+                    <th className="px-4 py-3">Fecha</th>
+                    <th className="px-4 py-3">Precio Total</th>
+                    <th className="px-4 py-3">Medio de Pago</th>
+                    <th className="px-4 py-3">Observaciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {metricsData.map((venta: any) => (
+                    <tr key={venta.id} className="border-b border-gray-700 hover:bg-gray-600">
+                      <td className="px-4 py-3">{new Date(venta.fecha).toLocaleDateString()}</td>
+                      <td className="px-4 py-3">${venta.precioTotal.toLocaleString()}</td>
+                      <td className="px-4 py-3">{venta.medioDePago}</td>
+                      <td className="px-4 py-3">{venta.observaciones || '-'}</td>
+                    </tr>
+                  ))}
+                  <tr className="bg-gray-700 font-bold">
+                    <td className="px-4 py-3">Total</td>
+                    <td className="px-4 py-3">
+                      ${metricsData.reduce((acc: number, curr: any) => acc + curr.precioTotal, 0).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3"></td>
+                    <td className="px-4 py-3"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+  
+          {selectedMetric === 'comisiones' && metricsData && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left text-white">
+                <thead className="text-xs uppercase bg-gray-700">
+                  <tr>
+                    <th className="px-4 py-3">Fecha</th>
+                    <th className="px-4 py-3">Comisión</th>
+                    <th className="px-4 py-3">Tipo</th>
+                    <th className="px-4 py-3">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {metricsData.map((item: any) => (
+                    <>
+                      {item.ventas.map((venta: any) => (
+                        <tr key={venta.id} className="border-b border-gray-700 hover:bg-gray-600">
+                          <td className="px-4 py-3">{new Date(venta.fecha).toLocaleDateString()}</td>
+                          <td className="px-4 py-3">${venta.comision.toLocaleString()}</td>
+                          <td className="px-4 py-3">{venta.tipoComision}</td>
+                          <td className="px-4 py-3">${item.totalComision.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                      <tr className="bg-gray-700 font-bold">
+                        <td className="px-4 py-3">Total Comisión</td>
+                        <td className="px-4 py-3"></td>
+                        <td className="px-4 py-3"></td>
+                        <td className="px-4 py-3">${item.totalComision.toLocaleString()}</td>
+                      </tr>
+                    </>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+  
+          {selectedMetric === 'metodoDePago' && (
             <MetodoDePago startDate={startDate} endDate={endDate} />
           )}
-
+        </div>
       </div>
     </div>
-  </div>
-);}
+  );}
 export default Dashboard;
