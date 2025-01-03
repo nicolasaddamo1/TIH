@@ -115,6 +115,11 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleMetricChange = (metric: string) => {
+    setSelectedMetric(metric);
+    setMetricsData(null); // Limpia los datos para evitar conflictos
+  };
+
   const renderVentasTable = () => {
     if (!metricsData || !Array.isArray(metricsData)) return null;
 
@@ -212,7 +217,7 @@ const Dashboard: React.FC = () => {
           <ul className="space-y-4">
             <li>
               <button
-                onClick={() => setSelectedMetric('ventas')}
+                onClick={() => handleMetricChange('ventas')}
                 className={`w-full p-2 text-left rounded-md ${selectedMetric === 'ventas' ? 'bg-blue-600' : 'bg-gray-700'}`}
               >
                 Ventas
@@ -220,7 +225,7 @@ const Dashboard: React.FC = () => {
             </li>
             <li>
               <button
-                onClick={() => setSelectedMetric('comisiones')}
+                onClick={() => handleMetricChange('comisiones')}
                 className={`w-full p-2 text-left rounded-md ${selectedMetric === 'comisiones' ? 'bg-blue-600' : 'bg-gray-700'}`}
               >
                 Comisiones
@@ -228,7 +233,7 @@ const Dashboard: React.FC = () => {
             </li>
             <li>
               <button
-                onClick={() => setSelectedMetric('metodoDePago')}
+                onClick={() => handleMetricChange('metodoDePago')}
                 className={`w-full p-2 text-left rounded-md ${selectedMetric === 'metodoDePago' ? 'bg-blue-600' : 'bg-gray-700'}`}
               >
                 Método de Pago
