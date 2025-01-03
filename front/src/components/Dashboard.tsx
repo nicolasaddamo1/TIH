@@ -334,8 +334,8 @@ const Dashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {metricsData.map((venta: any) => (
-                    <tr key={venta.id} className="border-b border-gray-700 hover:bg-gray-600">
+                  {metricsData.map((venta: any, index: number) => (
+                    <tr key={venta.id} className={index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}>
                       <td className="px-4 py-3">{new Date(venta.fecha).toLocaleDateString()}</td>
                       <td className="px-4 py-3">${venta.precioTotal.toLocaleString()}</td>
                       <td className="px-4 py-3">{venta.medioDePago}</td>
@@ -343,12 +343,12 @@ const Dashboard: React.FC = () => {
                     </tr>
                   ))}
                   <tr className="bg-gray-700 font-bold">
-                    <td className="px-4 py-3">Total</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 bg-gray-600">Total</td>
+                    <td className="px-4 py-3 bg-gray-600">
                       ${metricsData.reduce((acc: number, curr: any) => acc + curr.precioTotal, 0).toLocaleString()}
                     </td>
-                    <td className="px-4 py-3"></td>
-                    <td className="px-4 py-3"></td>
+                    <td className="px-4 py-3 bg-gray-600"></td>
+                    <td className="px-4 py-3 bg-gray-600"></td>
                   </tr>
                 </tbody>
               </table>
@@ -369,8 +369,8 @@ const Dashboard: React.FC = () => {
                 <tbody>
                   {metricsData.map((item: any) => (
                     <>
-                      {item.ventas.map((venta: any) => (
-                        <tr key={venta.id} className="border-b border-gray-700 hover:bg-gray-600">
+                      {item.ventas.map((venta: any, index: number) => (
+                        <tr key={venta.id} className={index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}>
                           <td className="px-4 py-3">{new Date(venta.fecha).toLocaleDateString()}</td>
                           <td className="px-4 py-3">${venta.comision.toLocaleString()}</td>
                           <td className="px-4 py-3">{venta.tipoComision}</td>
@@ -378,10 +378,10 @@ const Dashboard: React.FC = () => {
                         </tr>
                       ))}
                       <tr className="bg-gray-700 font-bold">
-                        <td className="px-4 py-3">Total Comisión</td>
-                        <td className="px-4 py-3"></td>
-                        <td className="px-4 py-3"></td>
-                        <td className="px-4 py-3">${item.totalComision.toLocaleString()}</td>
+                        <td className="px-4 py-3 bg-gray-600">Total Comisión</td>
+                        <td className="px-4 py-3 bg-gray-600"></td>
+                        <td className="px-4 py-3 bg-gray-600"></td>
+                        <td className="px-4 py-3 bg-gray-600">${item.totalComision.toLocaleString()}</td>
                       </tr>
                     </>
                   ))}
