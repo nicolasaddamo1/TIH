@@ -3,10 +3,14 @@ import {jwtDecode} from 'jwt-decode';
 import axios from 'axios';
 
 interface Service {
-  usuario: string; 
-  descripcion: string;
+  id?: string;
   precioTotal: number;
-  clienteId: string;
+  medioDePago: string;
+  fecha: string;
+  observaciones: string;
+  comision: string;
+  cliente: string;
+  vendedor: string;
 }
 
 interface ClienteData {
@@ -15,17 +19,19 @@ interface ClienteData {
   apellido: string;
   direccion: string;
   nroTelefono: string;
-  clienteId?: string;
+  cliente?: string;
 }
 
 const ServiceForm: React.FC = () => {
   const [service, setService] = useState<Service>({
-    usuario: '',
-    descripcion: '',
     precioTotal: 0,
-    clienteId: '',
+    medioDePago: 'Efectivo', 
+    fecha: new Date().toISOString().split('T')[0],
+    observaciones: '',
+    comision: 'Servicio',
+    cliente: '',
+    vendedor: '', 
   });
-
   const [clienteDni, setClienteDni] = useState('');
   const [isNuevoCliente, setIsNuevoCliente] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -37,7 +43,7 @@ const ServiceForm: React.FC = () => {
     nroTelefono: '',
   });
 
-  // Obtener usuario desde el token al cargar el componente
+  const mediosDePago = ['Efectivo', 'MercadoPago', 'Laura', 'CuentaDNI'];
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -45,7 +51,7 @@ const ServiceForm: React.FC = () => {
         const decodedToken: { sub: string } = jwtDecode(token);
         setService((prevService) => ({
           ...prevService,
-          usuario: decodedToken.sub, // ID del usuario autenticado
+          vendedor: decodedToken.sub,
         }));
       } catch (error) {
         console.error('Error al decodificar el token:', error);
@@ -53,7 +59,7 @@ const ServiceForm: React.FC = () => {
     }
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setService((prevService) => ({
       ...prevService,
@@ -67,7 +73,7 @@ const ServiceForm: React.FC = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/clientes/${clienteDni}`);
         if (response.data) {
           setClienteData(response.data);
-          setService((prev) => ({ ...prev, clienteId: response.data.id }));
+          setService((prev) => ({ ...prev, cliente: response.data.id }));
           alert('Cliente encontrado');
         }
       } catch (error) {
@@ -92,11 +98,12 @@ const ServiceForm: React.FC = () => {
       alert('Por favor complete todos los campos del cliente.');
     }
   };
-
+    
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!service.descripcion || service.precioTotal <= 0 || !service.clienteId) {
+    if (!service.observaciones || service.precioTotal <= 0 || !service.cliente || !service.vendedor || !service.medioDePago) {
+      console.log(service);
       setMessage('Por favor, complete todos los campos requeridos.');
       return;
     }
@@ -120,10 +127,15 @@ const ServiceForm: React.FC = () => {
       if (response.ok) {
         setMessage('Servicio registrado correctamente');
         setService((prevService) => ({
-          usuario: prevService.usuario, // Mantén el usuario autenticado
-          descripcion: '',
+          ...prevService,
           precioTotal: 0,
-          clienteId: '',
+          observaciones: '',
+          medioDePago: 'Efectivo',
+          comision: 'Servicio',
+          cliente: '',
+          fecha: new Date().toISOString().split('T')[0],
+          
+
         }));
       } else {
         const errorResponse = await response.json();
@@ -210,17 +222,16 @@ const ServiceForm: React.FC = () => {
             </>
           )}
         </div>
-
         <h2 className="text-center text-2xl font-semibold mb-4">Registrar Servicio</h2>
         {message && <p className="text-center text-lg text-red-500">{message}</p>}
 
         <form onSubmit={handleSubmit}>
           <textarea
-            name="descripcion"
-            placeholder="Descripción"
-            value={service.descripcion}
+            name="observaciones"
+            placeholder="Observaciones"
+            value={service.observaciones}
             onChange={handleChange}
-            className="w-full p-3 rounded-md bg-gray-800 text-white"
+            className="w-full p-3 rounded-md bg-gray-800 text-white mb-4"
           />
           <input
             type="number"
@@ -228,7 +239,26 @@ const ServiceForm: React.FC = () => {
             placeholder="Precio"
             value={service.precioTotal || ''}
             onChange={handleChange}
-            className="w-full p-3 rounded-md bg-gray-800 text-white"
+            className="w-full p-3 rounded-md bg-gray-800 text-white mb-4"
+          />
+          <select
+            name="medioDePago"
+            value={service.medioDePago}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md bg-gray-800 text-white mb-4"
+          >
+            {mediosDePago.map((medio) => (
+              <option key={medio} value={medio}>
+                {medio}
+              </option>
+            ))}
+          </select>
+          <input
+            type="date"
+            name="fecha"
+            value={service.fecha}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md bg-gray-800 text-white mb-4"
           />
           <button type="submit" className="bg-blue-500 w-full p-3 rounded-md text-white">
             Registrar Servicio
