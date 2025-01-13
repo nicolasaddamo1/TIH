@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductDto } from './dto/product.dto';
 import { CreateCellhponeDto } from './dto/cellphone.dto';
@@ -16,6 +16,13 @@ export class ProductoController {
     @Get('celulares')
     async getAllCelulares(){
         return this.productoService.getAllCelulares()
+    }
+    @Get('celulares/imei')
+    async getAllCelularesByImei(
+        @Query('imei') imei:string
+    ){
+        return this.productoService.getAllCelularesByImei(imei)
+    
     }
     
     @Get(':id')

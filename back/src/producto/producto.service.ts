@@ -19,7 +19,9 @@ export class ProductoService {
     }
     
     async getAllCelularesByImei(imei:string){
-        return await this.celularRepository.findOneBy({imei})
+        return await this.celularRepository.findOne({
+            where:{imei},
+        })
     }
     async getProductsById(id){
         return await this.productoRepository.findOneBy({id})
