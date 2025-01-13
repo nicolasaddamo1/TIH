@@ -56,7 +56,7 @@ const Dashboard: React.FC = () => {
         }
   
         const data = await response.json();
-        setUsuarios(data); // Suponiendo que `data` es un array con usuarios que tienen `id` y `nombre`.
+        setUsuarios(data); 
       } catch (error) {
         console.error('Error al obtener los usuarios:', error);
         alert('Hubo un problema al cargar los usuarios.');

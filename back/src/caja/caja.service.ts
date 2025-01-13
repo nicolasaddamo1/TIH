@@ -86,7 +86,7 @@ export class CajaService {
             const cell = await this.cellphoneRepository.findOne({ where: { id } });
             const acc = await this.productoRepository.findOne({ where: { id } });
             if (cell) {
-                productos.push(cell.id);
+                productos.push(cell.id, cell.fechaVenta = new Date());
             } else if (acc) {
                 productos.push(acc.id);
             } else {
