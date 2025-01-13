@@ -39,6 +39,10 @@ const SalesForm: React.FC = () => {
   const [medioDePago, setMedioDePago] = useState('MercadoPago');
   const [observaciones, setObservaciones] = useState('');
   const [vendedorId, setVendedorId] = useState('');
+  const [imei, setImei] = useState('');
+  const [productoPorImei, setProductoPorImei] = useState<Producto | null>(null);
+
+
   
 
 
@@ -124,6 +128,26 @@ const SalesForm: React.FC = () => {
       setMedioDePago(e.target.value); 
     };
 
+    const handleSearchByImei = async () => {
+      if (!imei) {
+        alert('Por favor, ingrese un IMEI.');
+        return;
+      }
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/producto/imei/${imei}`);
+        if (response.data) {
+          setProductoPorImei(response.data);
+          alert('Producto encontrado');
+        } else {
+          setProductoPorImei(null);
+          alert('Producto no encontrado');
+        }
+      } catch (error) {
+        console.error('Error al buscar por IMEI:', error);
+        alert('Error al buscar producto por IMEI.');
+      }
+    };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
@@ -285,6 +309,25 @@ const SalesForm: React.FC = () => {
           onChange={(e) => setSelectedQuantity(Number(e.target.value))}
           className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
         />
+
+        <h2 className="text-xl font-semibold mb-4 text-white">Buscar por Celular por IMEI</h2>
+        <input
+          type="text"
+          placeholder="Ingrese IMEI"
+          value={imei}
+          onChange={(e) => setImei(e.target.value)}
+          className="w-full p-2 rounded-md bg-gray-800 text-white mb-4"
+        />
+
+        <button 
+          type="button"
+          onClick={handleSearchByImei}
+          className="bg-green-500 w-full px-3 py-2 rounded-md text-white hover:bg-green-600 hover:text-black"
+        >
+          Buscar Celular
+        </button>
+          <br />
+          <br />
         <button
           type="button"
           onClick={handleAddToCart}
