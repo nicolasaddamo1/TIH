@@ -134,13 +134,16 @@ const SalesForm: React.FC = () => {
         return;
       }
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/producto/imei/${imei}`);
+
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/producto/celulares/imei`, { params: { imei } });
         if (response.data) {
           setProductoPorImei(response.data);
-          alert('Producto encontrado');
+          alert('Celular encontrado');
+          setCart([...cart, { product: response.data, quantity: 1 }]);
+
         } else {
           setProductoPorImei(null);
-          alert('Producto no encontrado');
+          alert('Celular no encontrado');
         }
       } catch (error) {
         console.error('Error al buscar por IMEI:', error);
