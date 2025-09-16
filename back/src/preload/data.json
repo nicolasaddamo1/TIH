@@ -1,4 +1,16 @@
 {
+  "categorias": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "nombre": "accesorios",
+      "descripcion": "Accesorios para celulares y dispositivos electrónicos"
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440002", 
+      "nombre": "celulares",
+      "descripcion": "Teléfonos celulares nuevos y usados"
+    }
+  ],
   "usuarios": [
     {
       "id": "569df967-4bfa-4b69-8181-d131f425cf7b",
@@ -44,22 +56,22 @@
       "precioTotal": 3000,
       "productos": ["1440f790-7224-4048-b559-f3aee102a227", "f77cb2cb-56ee-4faf-9670-448749c804e5"],
       "medioDePago": "Efectivo",
-      "cliente": "Cliente A",
+      "cliente": "a1b2c3d4-e5f6-7890-abcd-1234567890ef",
       "nroTelefono": 1234567890,
       "observaciones": "Sin observaciones",
       "description": "Venta mayorista",
-      "comision": "ALTA",
+      "comision": "Venta",
       "vendedor": "569df967-4bfa-4b69-8181-d131f425cf7b"
     },
     {
       "precioTotal": 4500,
       "productos": ["7031c794-8f3d-4c35-8e70-ac373a5e2213", "6f0ad7e2-60bd-4913-bfbf-613175effd30"],
       "medioDePago": "Laura",
-      "cliente": "Cliente B",
+      "cliente": "a1b2c3d4-e5f6-7890-abcd-1234567890ef",
       "nroTelefono": 1134572470,
       "observaciones": "Revisar stock",
       "description": "Venta minorista",
-      "comision": "MEDIA",
+      "comision": "Servicio",
       "vendedor": "1c984b2f-b3b1-43e0-b538-c27d589df292"
     }
   ],
@@ -78,25 +90,31 @@
   "productos": [
     {
       "id": "1440f790-7224-4048-b559-f3aee102a227",
-      "nombre": "Producto A",
+      "marca": "Samsung",
+      "modelo": "Galaxy Buds Pro",
+      "proveedor": "Distribuidora Tech",
       "precio": 100,
       "stock": 50,
       "imagen": "imagen-a.jpg",
-      "categoria": "Electrónica",
+      "categoria": "accesorios",
       "tipo":"Producto"
     },
     {
       "id": "f77cb2cb-56ee-4faf-9670-448749c804e5",
-      "nombre": "Producto B",
+      "marca": "Apple",
+      "modelo": "AirPods 3",
+      "proveedor": "Apple Store",
       "precio": 100,
       "stock": 50,
       "imagen": "imagen-a.jpg",
-      "categoria": "Electrónica",
+      "categoria": "accesorios",
       "tipo":"Producto"
     },
     {
       "id": "6f0ad7e2-60bd-4913-bfbf-613175effd30",
-      "nombre": "Producto C",
+      "marca": "Sony",
+      "modelo": "WH-1000XM4",
+      "proveedor": "Audio Pro",
       "precio": 100,
       "stock": 50,
       "imagen": "imagen-a.jpg",
@@ -104,34 +122,44 @@
     },
     {
       "id": "7031c794-8f3d-4c35-8e70-ac373a5e2213",
-      "nombre": "Producto D",
+      "marca": "Xiaomi",
+      "modelo": "Mi Band 6",
+      "proveedor": "Smart Wear",
       "precio": 200,
       "stock": 30,
       "imagen": "imagen-b.jpg",
-      "categoria": "Ropa"
+      "categoria": "accesorios"
     }
   ],
   "cellphones":[
     {
       "id": "12d5f498-ecc2-4c52-bb6b-7d92b8de6cd9",
-      "nombre": "Celular X",
+      "marca": "iPhone",
+      "modelo": "13 Pro",
+      "proveedor": "Apple Store",
       "precio": 3500,
       "stock": 10,
       "imagen": "celular-x.jpg",
-      "categoria": "Electrónica",
+      "categoria": "celulares",
       "estado":"Nuevo",
-      "tipo":"Cellphone"
+      "tipo":"Cellphone",
+      "imei": "123456789012345",
+      "fechaCompra": "2024-01-15"
     },
     {
       "id": "dc632abf-f8e2-4f8f-9d23-389557ce2d85",
-      "nombre": "Celular Y",
+      "marca": "Samsung",
+      "modelo": "Galaxy S21",
+      "proveedor": "Samsung Store",
       "precio": 4000,
       "stock": 15,
       "imagen": "celular-y.jpg",
-      "categoria": "Electrónica",
+      "categoria": "celulares",
       "estado":"Usado",
       "descripcionEstado":"Pantalla estallada",
-      "tipo":"Cellphone"
+      "tipo":"Cellphone",
+      "imei": "987654321098765",
+      "fechaCompra": "2024-02-10"
     }
   ],
   "clientes":[{
@@ -140,6 +168,7 @@
     "nombre": "Juan",
     "apellido": "Pérez",
     "direccion": "Calle Falsa 123",
+    "localidad": "Buenos Aires",
     "nroTelefono": 123456789
   }]
   

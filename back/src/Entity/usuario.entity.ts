@@ -43,7 +43,7 @@ export class Usuario {
     @OneToMany(() => Factura, factura => factura.usuario)
     facturas: Factura[];
 
-    @OneToMany(() => Caja, caja => caja.vendedor)
+    @OneToMany(() => Caja, caja => caja.vendedorId)
     cajas: Caja[];
 
 

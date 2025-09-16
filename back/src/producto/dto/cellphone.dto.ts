@@ -1,86 +1,104 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator"
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
 export class CreateCellhponeDto {
+  @IsNotEmpty()
+  @IsString()
+  marca: string;
 
-    @IsNotEmpty()
-    @IsString()
-    nombre: string
-    
-    @IsNotEmpty()
-    @IsNumber()
-    precio: number
-    
-    @IsNotEmpty()
-    @IsNumber()
-    stock: number
-    
-    @IsOptional()
-    @IsString()
-    imagen?: string
-    
-    @IsOptional()
-    @IsString()
-    categoria?: string
+  @IsNotEmpty()
+  @IsString()
+  modelo: string;
 
-    @IsOptional()
-    fechaCompra?: Date;
-    
-    @IsOptional()
-    @IsString()
-    fechaVenta?: Date;
-    
-    @IsNotEmpty()
-    @IsString()
-    estado: string;
+  @IsNotEmpty()
+  @IsString()
+  proveedor: string;
 
-    @IsNotEmpty()
-    @IsString()
-    imei: string;
-    
-    @IsString()
-    @IsOptional()
-    descripcionEstado?: string;
+  @IsNotEmpty()
+  @IsNumber()
+  precio: number;
 
+  @IsNotEmpty()
+  @IsNumber()
+  stock: number;
+
+  @IsOptional()
+  @IsString()
+  imagen?: string;
+
+  @IsOptional()
+  @IsString()
+  categoria?: string;
+
+  @IsOptional()
+  fechaCompra?: Date;
+
+  @IsOptional()
+  @IsString()
+  fechaVenta?: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  estado: string;
+
+  @IsNotEmpty()
+  @IsString()
+  imei: string;
+
+  @IsString()
+  @IsOptional()
+  descripcionEstado?: string;
 }
 export class UpdateCellphoneDto {
+  @IsOptional()
+  @IsString()
+  marca?: string;
 
-    @IsOptional()
-    @IsString()
-    nombre?: string
-    
-    @IsOptional()
-    @IsNumber()
-    precio?: number
-    
-    @IsOptional()
-    @IsNumber()
-    stock?: number
-    
-    @IsOptional()
-    @IsString()
-    imagen?: string
-    
-    @IsOptional()
-    @IsString()
-    categoria?: string
+  @IsOptional()
+  @IsString()
+  modelo?: string;
 
-    @IsOptional()
-    fechaCompra?: Date;
-    
-    @IsOptional()
-    @IsString()
-    fechaVenta?: Date;
-    
-    @IsOptional()
-    @IsString()
-    estado?: string;
-    
-    @IsString()
-    @IsOptional()
-    descripcionEstado?: string;
-    
-    @IsString()
-    @IsOptional()
-    imei?
+  @IsOptional()
+  @IsString()
+  proveedor?: string;
 
+  @IsOptional()
+  @IsNumber()
+  precio?: number;
+
+  @IsOptional()
+  @IsNumber()
+  stock?: number;
+
+  @IsOptional()
+  @IsString()
+  imagen?: string;
+
+  @IsOptional()
+  @IsString()
+  categoria?: string;
+
+  @IsOptional()
+  fechaCompra?: Date;
+
+  @IsOptional()
+  @IsString()
+  fechaVenta?: Date;
+
+  @IsOptional()
+  @IsString()
+  estado?: string;
+
+  @IsString()
+  @IsOptional()
+  descripcionEstado?: string;
+
+  @IsString()
+  @IsOptional()
+  imei?: string;
 }

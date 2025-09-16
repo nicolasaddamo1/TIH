@@ -25,4 +25,8 @@ export class CreateClienteDto {
   @MaxLength(500)
   direccion?: string;
 
+  @IsString()
+  @MaxLength(50)
+  localidad: string;
+
 }

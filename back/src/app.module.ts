@@ -17,6 +17,10 @@ import { Factura } from './Entity/factura.entity';
 import { PreloadService } from './preload/preload.service';
 import { Cliente } from './Entity/cliente.entity';
 import { ClienteModule } from './cliente/cliente.module';
+import { Suplier } from './Entity/suplier.entity';
+import { Category } from './Entity/category.entity';
+import { SupplierModule } from './supplier/supplier.module';
+import { CategoryModule } from './category/category.module';
 
 
 @Module({
@@ -38,7 +42,7 @@ import { ClienteModule } from './cliente/cliente.module';
         synchronize: true, 
       }),
     }),
-    TypeOrmModule.forFeature([Usuario, Producto,  Caja, Factura, Cellphone, Cliente]),
+    TypeOrmModule.forFeature([Usuario, Producto,  Caja, Factura, Cellphone, Cliente, Suplier, Category]),
     JwtModule.register({
       global: true,
       signOptions: {
@@ -53,6 +57,8 @@ import { ClienteModule } from './cliente/cliente.module';
     MetricsModule,
     CajaModule,
     ClienteModule,
+    SupplierModule,
+    CategoryModule,
     ReparacionModule
     
   ],
