@@ -1,0 +1,54 @@
+runConfig:
+  minInstances: 1 # mínimo 1 contenedor siempre encendido
+  maxInstances: 10 # máximo 10 instancias simultáneas
+  cpu: 1 # 1 CPU por instancia
+  memoryMiB: 512 # 512MB de RAM
+  concurrency: 80 # 80 requests por instancia
+
+env:
+  # ==== Variables públicas (value) ====
+  - variable: DB_HOST
+    value: db.wilvrifbkmbzribrvcys.supabase.co
+    availability:
+      - RUNTIME
+
+  - variable: DB_PORT
+    value: '5432'
+    availability:
+      - RUNTIME
+
+  - variable: DB_USERNAME
+    value: postgres
+    availability:
+      - RUNTIME
+
+  - variable: DB_NAME
+    value: postgres
+    availability:
+      - RUNTIME
+
+  - variable: DATABASE_URL
+    value: postgresql://postgres.wilvrifbkmbzribrvcys:__REPLACED__@aws-1-us-east-2.pooler.supabase.com:6543/postgres?sslmode=require
+    availability:
+      - RUNTIME
+
+  - variable: STORAGE_URL
+    value: imgstorage-d91df.appspot.com
+    availability:
+      - RUNTIME
+
+  # ==== Variables sensibles (secret) ====
+  - variable: DB_PASSWORD
+    secret: supabasePasswordSecret
+    availability:
+      - RUNTIME
+
+  - variable: JWT_SECRET
+    secret: jwtSecret
+    availability:
+      - RUNTIME
+
+  - variable: FIREBASE_CREDENTIALS
+    secret: firebaseServiceAccount
+    availability:
+      - RUNTIME
