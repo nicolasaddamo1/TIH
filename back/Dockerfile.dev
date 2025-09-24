@@ -1,0 +1,33 @@
+FROM node:18-alpine
+
+# Instalar dependencias del sistema necesarias para desarrollo
+RUN apk add --no-cache dumb-init python3 make g++
+
+# Crear usuario no-root
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nestjs -u 1001
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package*.json ./
+
+# Copiar archivo de credenciales de Firebase
+COPY src/config/firebase/firebase-service-account.json ./firebase-service-account.json
+
+# Instalar todas las dependencias (incluyendo dev)
+RUN npm ci && npm cache clean --force
+
+# Cambiar ownership
+RUN chown -R nestjs:nodejs /app
+USER nestjs
+
+# Exponer puerto
+EXPOSE 3000
+
+# Usar dumb-init como entrypoint
+ENTRYPOINT ["dumb-init", "--"]
+
+# Comando por defecto (se puede sobrescribir en docker-compose)
+CMD ["npm", "run", "start:dev"]

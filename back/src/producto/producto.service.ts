@@ -4,6 +4,7 @@ import { Cellphone, Producto } from 'src/Entity/producto.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
 import { CreateCellhponeDto, UpdateCellphoneDto } from './dto/cellphone.dto';
+import { FirebaseService } from '../firebase/firebase.service';
 
 @Injectable()
 export class ProductoService {
@@ -12,6 +13,7 @@ export class ProductoService {
     private productoRepository: Repository<Producto>,
     @InjectRepository(Cellphone)
     private celularRepository: Repository<Cellphone>,
+    private firebaseService: FirebaseService,
   ) {}
   async getAllProducts() {
     return await this.productoRepository.find();
@@ -61,8 +63,56 @@ export class ProductoService {
     return await this.productoRepository.findOneBy({ id });
   }
 
-  async createProducts(data: CreateProductDto) {
-    const product = await this.productoRepository.create(data);
+  async createProducts(data: CreateProductDto, imagen?: Express.Multer.File) {
+    console.log('📦 Creating product with data:', data);
+    console.log('🖼️ Image file received:', imagen ? 'YES' : 'NO');
+
+    let imagenUrl = null;
+
+    // Si hay imagen, subirla a Firebase
+    if (imagen) {
+      console.log('📁 Image details:', {
+        originalname: imagen.originalname,
+        mimetype: imagen.mimetype,
+        size: imagen.size,
+        path: imagen.path,
+      });
+
+      try {
+        // Crear nombre único para el archivo
+        const fileName = `productos/${Date.now()}_${imagen.originalname}`;
+        console.log('📤 Uploading to Firebase with filename:', fileName);
+
+        // Subir a Firebase usando buffer
+        imagenUrl = await this.firebaseService.uploadFileBuffer(
+          imagen.buffer,
+          fileName,
+          imagen.mimetype,
+        );
+
+        console.log('✅ Image uploaded successfully. URL:', imagenUrl);
+      } catch (error) {
+        console.error('❌ Error uploading image to Firebase:', error);
+        console.error('❌ Error details:', {
+          message: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : 'No stack trace',
+          name: error instanceof Error ? error.name : 'Unknown',
+        });
+        // Continuar sin imagen si hay error
+      }
+    } else {
+      console.log('⚠️ No image provided');
+    }
+
+    // Crear producto con URL de imagen
+    const productData = {
+      ...data,
+      imagen: imagenUrl,
+    };
+
+    console.log('💾 Saving product with image URL:', imagenUrl);
+
+    const product = await this.productoRepository.create(productData);
     return await this.productoRepository.save(product);
   }
   async createCellphone(data: CreateCellhponeDto) {

@@ -1,4 +1,13 @@
-import { IsEnum, IsInt, IsOptional, IsString, IsUUID, MaxLength, Max } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  Max,
+  IsNumberString,
+} from 'class-validator';
 import { Comision } from 'src/enum/comision.enum';
 import { MedioDePago } from 'src/enum/medioDePago.enum';
 
@@ -14,11 +23,11 @@ export class CreateClienteDto {
   @MaxLength(50)
   apellido: string;
 
-  
   @IsInt()
-  @Max(2147483647,{message: 'El número de teléfono debe estar entre 0 y 2147483647'})
+  @Max(2147483647, {
+    message: 'El número de teléfono debe estar entre 0 y 2147483647',
+  })
   nroTelefono: number;
-
 
   @IsOptional()
   @IsString()
@@ -28,5 +37,4 @@ export class CreateClienteDto {
   @IsString()
   @MaxLength(50)
   localidad: string;
-
 }

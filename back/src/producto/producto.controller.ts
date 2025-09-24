@@ -7,7 +7,12 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { ProductoService } from './producto.service';
 import { CreateProductDto } from './dto/product.dto';
 import { CreateCellhponeDto } from './dto/cellphone.dto';
@@ -45,9 +50,59 @@ export class ProductoController {
   }
 
   @Post()
-  async createProducts(@Body() data: CreateProductDto) {
-    return this.productoService.createProducts(data);
+  @UseInterceptors(FileInterceptor('imagen'))
+  async createProducts(
+    @Body() data: CreateProductDto,
+    @UploadedFile() imagen?: Express.Multer.File,
+  ) {
+    console.log('🎯 Controller received request');
+    console.log('📋 Body data:', data);
+    console.log('📁 File received:', imagen ? 'YES' : 'NO');
+    if (imagen) {
+      console.log('📁 File details:', {
+        fieldname: imagen.fieldname,
+        originalname: imagen.originalname,
+        mimetype: imagen.mimetype,
+        size: imagen.size,
+        path: imagen.path,
+      });
+    }
+    return this.productoService.createProducts(data, imagen);
   }
+  @Post('test-upload')
+  @UseInterceptors(FileInterceptor('imagen'))
+  async testUpload(
+    @Body() data: any,
+    @UploadedFile() imagen?: Express.Multer.File,
+  ) {
+    console.log('🧪 Test upload endpoint');
+    console.log('📋 Body data:', data);
+    console.log('📁 File received:', imagen ? 'YES' : 'NO');
+    if (imagen) {
+      console.log('📁 File details:', {
+        fieldname: imagen.fieldname,
+        originalname: imagen.originalname,
+        mimetype: imagen.mimetype,
+        size: imagen.size,
+        buffer: imagen.buffer
+          ? `Buffer with ${imagen.buffer.length} bytes`
+          : 'No buffer',
+      });
+    }
+    return {
+      message: 'Test upload successful',
+      hasFile: !!imagen,
+      fileInfo: imagen
+        ? {
+            name: imagen.originalname,
+            size: imagen.size,
+            type: imagen.mimetype,
+            hasBuffer: !!imagen.buffer,
+          }
+        : null,
+    };
+  }
+
   @Post('celulares')
   async createCellphone(@Body() data: CreateCellhponeDto) {
     return this.productoService.createCellphone(data);

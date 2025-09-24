@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from 'src/Entity/usuario.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
@@ -15,11 +16,41 @@ export class UsuarioService {
         
     }
 
-    async createUserService(
-        data:CreateUserDto
-    ){
-        const user = await this.usuarioRepository.create(data)
-        return await this.usuarioRepository.save(user)
+    async createUserService(data: CreateUserDto) {
+        // Validar que el email no exista
+        const existingUserByEmail = await this.usuarioRepository.findOne({
+            where: { email: data.email }
+        });
+        
+        if (existingUserByEmail) {
+            throw new ConflictException('El email ya está registrado');
+        }
+
+        // Validar que el DNI no exista
+        const existingUserByDni = await this.usuarioRepository.findOne({
+            where: { dni: data.dni }
+        });
+        
+        if (existingUserByDni) {
+            throw new ConflictException('El DNI ya está registrado');
+        }
+
+        // Hash de la contraseña
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+
+        // Crear usuario con contraseña hasheada
+        const userData = {
+            ...data,
+            password: hashedPassword
+        };
+
+        const user = this.usuarioRepository.create(userData);
+        const savedUser = await this.usuarioRepository.save(user);
+        
+        // No devolver la contraseña en la respuesta
+        const { password, ...userWithoutPassword } = savedUser;
+        return userWithoutPassword;
     }
     
     async updateUserService(id:string, data:UpdateUserDto){

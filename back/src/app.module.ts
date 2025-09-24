@@ -21,13 +21,20 @@ import { Suplier } from './Entity/suplier.entity';
 import { Category } from './Entity/category.entity';
 import { SupplierModule } from './supplier/supplier.module';
 import { CategoryModule } from './category/category.module';
+import { FirebaseService } from './firebase/firebase.service';
+import { ImagesModule } from './images/images.module';
 
+//!SUPABASE
+import { parse } from 'pg-connection-string';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+
+    //!LOCAL (config para Postgres local)
+    /*
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -39,10 +46,44 @@ import { CategoryModule } from './category/category.module';
         password: configService.get<string>('DB_PASSWORD', 'password'),
         database: configService.get<string>('DB_NAME', 'your_database'),
         autoLoadEntities: true,
-        synchronize: true, 
+        synchronize: true,
       }),
     }),
-    TypeOrmModule.forFeature([Usuario, Producto,  Caja, Factura, Cellphone, Cliente, Suplier, Category]),
+    */
+
+    //!SUPABASE (usa la DATABASE_URL de Supabase con SSL y pooler IPv4)
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const dbUrl = configService.get<string>('DATABASE_URL');
+        const parsed = parse(dbUrl);
+
+        return {
+          type: 'postgres',
+          host: parsed.host,
+          port: Number(parsed.port),
+          username: parsed.user,
+          password: parsed.password,
+          database: parsed.database,
+          autoLoadEntities: true,
+          synchronize: true, // ⚠️ solo en dev
+          ssl: { rejectUnauthorized: false },
+        };
+      },
+    }),
+
+    TypeOrmModule.forFeature([
+      Usuario,
+      Producto,
+      Caja,
+      Factura,
+      Cellphone,
+      Cliente,
+      Suplier,
+      Category,
+    ]),
+
     JwtModule.register({
       global: true,
       signOptions: {
@@ -50,6 +91,7 @@ import { CategoryModule } from './category/category.module';
       },
       secret: process.env.JWT_SECRET,
     }),
+
     UsuarioModule,
     ProductoModule,
     AuthModule,
@@ -59,16 +101,15 @@ import { CategoryModule } from './category/category.module';
     ClienteModule,
     SupplierModule,
     CategoryModule,
-    ReparacionModule
-    
+    ReparacionModule,
+    ImagesModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PreloadService],
+  providers: [AppService, PreloadService, FirebaseService],
+  exports: [FirebaseService],
 })
 export class AppModule implements OnModuleInit {
   constructor() {}
 
-  async onModuleInit() {
-    
-  }
+  async onModuleInit() {}
 }

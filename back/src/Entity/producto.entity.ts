@@ -32,7 +32,7 @@ export class Producto {
   @Column({ type: 'decimal', nullable: false, default: 0 })
   costo: number;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   imagen?: string;
 
   @ManyToOne(() => Category, (category) => category.productos)

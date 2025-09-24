@@ -10,8 +10,16 @@ export class ClienteService {
     @InjectRepository(Cliente) private clienteRepository: Repository<Cliente>,
   ) {}
   async createCliente(data: CreateClienteDto) {
-    const newClient = this.clienteRepository.create(data);
-    return this.clienteRepository.save(newClient);
+    try {
+      const newClient = this.clienteRepository.create(data);
+      return await this.clienteRepository.save(newClient);
+    } catch (error: any) {
+      if (error.code === '23505') {
+        // PostgreSQL unique constraint violation
+        throw new Error(`Ya existe un cliente con el DNI ${data.dni}`);
+      }
+      throw error;
+    }
   }
 
   async getAllClients() {
